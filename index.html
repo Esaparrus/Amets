@@ -8,38 +8,44 @@
 </head>
 <body>
 
-<!-- Overlay de transición entre escenas -->
+<!-- Overlay de transición -->
 <div id="transition-overlay"><span>✨</span></div>
 
+<!-- Botón mute (siempre visible) -->
+<button id="btn-mute" title="Silenciar / activar música">🔊</button>
+
 <!-- ══════════════════════════════════════════
-     PANTALLA 1: INICIO
+     INTRO
 ══════════════════════════════════════════ -->
 <div id="screen-intro" class="screen active">
   <canvas id="intro-bg"></canvas>
   <div class="intro-content">
     <div class="intro-emoji">🎂</div>
     <h1 class="game-title">Amets y el Secreto<br>del Cumpleaños Perdido</h1>
-    <p class="game-subtitle">Una aventura mágica te espera…</p>
+    <p class="game-subtitle">Una aventura mágica de verdad te espera…</p>
     <button class="btn btn-primary pulse" id="btn-start">✨ Empezar aventura</button>
   </div>
 </div>
 
 <!-- ══════════════════════════════════════════
-     PANTALLA 2: NARRATIVA (Lumi)
+     STORY (Escenas narrativas con personajes)
 ══════════════════════════════════════════ -->
-<div id="screen-narrative" class="screen">
-  <div class="narrative-wrap">
-    <div class="lumi-wrap">
-      <div class="lumi-avatar">🌟</div>
-      <div class="lumi-name">Lumi</div>
+<div id="screen-story" class="screen">
+  <div class="story-wrap">
+    <div class="story-char" id="story-char">
+      <span class="story-avatar" id="story-avatar">🌟</span>
+      <span class="story-name"  id="story-name">Lumi</span>
     </div>
-    <div class="speech-bubble" id="narrative-text">…</div>
-    <button class="btn btn-primary" id="btn-narrative-next">Continuar →</button>
+    <div class="speech-bubble" id="story-text">…</div>
+    <div class="story-nav">
+      <span class="story-dots" id="story-dots"></span>
+      <button class="btn btn-primary" id="btn-story-next">Continuar →</button>
+    </div>
   </div>
 </div>
 
 <!-- ══════════════════════════════════════════
-     PANTALLA 3: MAPA
+     MAPA
 ══════════════════════════════════════════ -->
 <div id="screen-map" class="screen">
   <div class="map-header">
@@ -51,7 +57,7 @@
 </div>
 
 <!-- ══════════════════════════════════════════
-     PANTALLA 4: NIVEL 1 – LABERINTO
+     NIVEL 1 – LABERINTO
 ══════════════════════════════════════════ -->
 <div id="screen-level1" class="screen canvas-screen">
   <div class="level-header">
@@ -59,7 +65,7 @@
     <span class="level-name">El Bosque Laberinto</span>
   </div>
   <canvas id="canvas-maze"></canvas>
-  <p class="canvas-hint">Llega a la salida ⭐</p>
+  <p class="canvas-hint">Llega a la salida ⭐ — ¡el bosque cambia cada vez!</p>
   <div class="touch-dpad touch-controls" id="maze-dpad">
     <div class="dpad-grid">
       <div></div><button class="dpad-btn" id="m-up">⬆️</button><div></div>
@@ -72,13 +78,16 @@
 </div>
 
 <!-- ══════════════════════════════════════════
-     PANTALLA 5: BOSS 1 – BALLET
+     BOSS 1 – MAESTRA DE BALLET
 ══════════════════════════════════════════ -->
 <div id="screen-boss1" class="screen boss-screen">
   <div class="boss-wrap">
     <div class="boss-top">
       <span class="boss-avatar">🩰</span>
-      <h2 class="boss-title">La Maestra de Ballet</h2>
+      <div>
+        <h2 class="boss-title">La Maestra de Ballet</h2>
+        <p class="boss-lore">"Solo quien sabe pensar merece pasar."</p>
+      </div>
     </div>
     <div class="progress-bar"><div class="progress-fill" id="boss1-fill"></div></div>
     <p class="q-counter" id="boss1-counter"></p>
@@ -90,7 +99,7 @@
 </div>
 
 <!-- ══════════════════════════════════════════
-     PANTALLA 6: NIVEL 2 – RUNNER
+     NIVEL 2 – RUNNER
 ══════════════════════════════════════════ -->
 <div id="screen-level2" class="screen canvas-screen">
   <div class="level-header">
@@ -98,22 +107,25 @@
     <span class="level-name">El Camino Encantado</span>
   </div>
   <canvas id="canvas-runner"></canvas>
-  <div class="runner-hud" id="runner-hud">📏 0 / 600</div>
+  <div class="runner-hud" id="runner-hud">📏 0 / 900</div>
   <div class="touch-controls jump-zone" id="runner-jump-zone">
     <button class="btn-jump" id="btn-jump">⬆️ SALTAR</button>
   </div>
 </div>
 
 <!-- ══════════════════════════════════════════
-     PANTALLA 7: BOSS 2 – MEMORIA
+     BOSS 2 – COREÓGRAFA MÁGICA
 ══════════════════════════════════════════ -->
 <div id="screen-boss2" class="screen boss-screen">
   <div class="boss-wrap">
     <div class="boss-top">
       <span class="boss-avatar">💃</span>
-      <h2 class="boss-title">La Coreógrafa Mágica</h2>
+      <div>
+        <h2 class="boss-title">La Coreógrafa Mágica</h2>
+        <p class="boss-lore">"La danza habla cuando las palabras no bastan."</p>
+      </div>
     </div>
-    <p class="boss-subtitle" id="boss2-subtitle">Memoriza los pasos de ballet…</p>
+    <p class="boss-subtitle" id="boss2-subtitle">Memoriza la secuencia de pasos…</p>
     <div class="round-dots" id="boss2-rounds"></div>
     <div class="memory-sequence" id="boss2-sequence"></div>
     <div class="memory-btns">
@@ -128,7 +140,7 @@
 </div>
 
 <!-- ══════════════════════════════════════════
-     PANTALLA 8: NIVEL 3 – FURGONETA
+     NIVEL 3 – FURGONETA
 ══════════════════════════════════════════ -->
 <div id="screen-level3" class="screen canvas-screen">
   <div class="level-header">
@@ -136,7 +148,7 @@
     <span class="level-name">La Carretera Mágica</span>
   </div>
   <canvas id="canvas-van"></canvas>
-  <div class="van-hud" id="van-hud">⭐ 0 &nbsp;|&nbsp; 📏 0 / 700</div>
+  <div class="van-hud" id="van-hud">⭐ 0 &nbsp;|&nbsp; 📏 0 / 1000</div>
   <div class="touch-controls van-touch" id="van-touch">
     <button class="btn-van" id="van-left-btn">⬅️</button>
     <button class="btn-van" id="van-right-btn">➡️</button>
@@ -144,13 +156,16 @@
 </div>
 
 <!-- ══════════════════════════════════════════
-     PANTALLA 9: BOSS 3 – GUARDIÁN
+     BOSS 3 – EL GRAN GUARDIÁN
 ══════════════════════════════════════════ -->
 <div id="screen-boss3" class="screen boss-screen">
   <div class="boss-wrap">
     <div class="boss-top">
       <span class="boss-avatar">👑</span>
-      <h2 class="boss-title">El Gran Guardián</h2>
+      <div>
+        <h2 class="boss-title">El Gran Guardián</h2>
+        <p class="boss-lore">"El conocimiento es la llave que abre todas las puertas."</p>
+      </div>
     </div>
     <div class="progress-bar"><div class="progress-fill" id="boss3-fill"></div></div>
     <p class="q-counter" id="boss3-counter"></p>
@@ -162,7 +177,7 @@
 </div>
 
 <!-- ══════════════════════════════════════════
-     PANTALLA 10: FINAL
+     FINAL
 ══════════════════════════════════════════ -->
 <div id="screen-final" class="screen">
   <canvas id="canvas-confetti"></canvas>
@@ -170,18 +185,23 @@
     <div class="final-cake" id="final-cake">🎂</div>
     <h1 class="final-title">¡Feliz cumpleaños,<br>Amets! 🎉</h1>
     <p class="final-msg">
-      Lo has conseguido, campeona. 🏆<br>
-      Eres valiente, lista y tienes mucho estilo.<br>
+      Papá David, mamá Ainara, Arai y Mara están<br>
+      muy orgullosos de ti. 💜<br><br>
+      Eres la hija del medio que une a toda la familia.<br>
+      Valiente, lista y con un estilo único.<br><br>
       ¡Que este sea el cumpleaños más especial de todos! 🌟
     </p>
     <button class="btn btn-primary" id="btn-replay">🔄 Jugar otra vez</button>
   </div>
 </div>
 
-<!-- Scripts: primero datos, luego escenas, luego main -->
+<!-- Audio system (primero) -->
+<script src="audio.js"></script>
+<!-- Datos -->
 <script src="data/questions.js"></script>
+<!-- Escenas -->
 <script src="scenes/intro.js"></script>
-<script src="scenes/narrative.js"></script>
+<script src="scenes/story.js"></script>
 <script src="scenes/map.js"></script>
 <script src="scenes/level1-maze.js"></script>
 <script src="scenes/boss1-quiz.js"></script>
@@ -190,6 +210,7 @@
 <script src="scenes/level3-van.js"></script>
 <script src="scenes/boss3-quiz.js"></script>
 <script src="scenes/final.js"></script>
+<!-- Motor principal -->
 <script src="main.js"></script>
 
 </body>

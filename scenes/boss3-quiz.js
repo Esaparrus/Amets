@@ -1,10 +1,9 @@
 /* ============================================================
-   ESCENA: BOSS 3 – PREGUNTAS MIXTAS (GUARDIÁN FINAL)
-   5 preguntas de todas las categorías
+   BOSS 3 – EL GRAN GUARDIÁN (preguntas mixtas, más difícil)
+   Reutiliza _makeQuizScene definido en boss1-quiz.js
 ============================================================ */
 
 const Boss3Scene = _makeQuizScene({
-  screenId:     'boss3',
   fillId:       'boss3-fill',
   counterId:    'boss3-counter',
   questionId:   'boss3-question',
@@ -12,6 +11,7 @@ const Boss3Scene = _makeQuizScene({
   hintId:       'boss3-hint',
   feedbackId:   'boss3-feedback',
   categories:   ['matematicas', 'idioma', 'cultura'],
-  numQuestions: 5,
-  onComplete:   () => { GAME.addCakePiece(); GAME.next(); }
+  numQuestions: 6,
+  musicTheme:   'boss',
+  onComplete() { GAME.addCakePiece(); AUDIO.levelComplete(); setTimeout(() => GAME.next(), 1400); }
 });

@@ -7,6 +7,8 @@ const FinalScene = {
   particles: [],
 
   init() {
+    AUDIO.startMusic('final');
+    setTimeout(() => AUDIO.finalFanfare(), 300);
     const canvas = document.getElementById('canvas-confetti');
     canvas.width  = window.innerWidth;
     canvas.height = window.innerHeight;

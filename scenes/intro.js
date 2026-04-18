@@ -59,6 +59,11 @@ const IntroScene = {
 
     /* Botón start */
     const btn = document.getElementById('btn-start');
-    btn.onclick = () => GAME.next();
+    btn.onclick = () => {
+      AUDIO.init();
+      AUDIO.click();
+      AUDIO.startMusic('menu');
+      GAME.next();
+    };
   }
 };

@@ -1,58 +1,50 @@
 /* ============================================================
    ESCENA: MAPA DEL VIAJE
-   Muestra el progreso entre zonas y el pastel
+   Progreso basado en GAME.cakePieces (0-6)
 ============================================================ */
 
 const MapScene = {
 
-  /* Definición de todas las zonas */
   zones: [
-    { icon: '🏠', label: 'Casa de Amets',        step: 0  },
-    { icon: '🌿', label: 'El Bosque Laberinto',  step: 3  },
-    { icon: '🩰', label: 'Escuela de Ballet',    step: 4  },
-    { icon: '🏃', label: 'El Camino Encantado',  step: 6  },
-    { icon: '💃', label: 'El Teatro Mágico',     step: 7  },
-    { icon: '🚐', label: 'La Carretera Mágica',  step: 9  },
-    { icon: '🎂', label: 'Puerta del Cumpleaños',step: 11 }
+    { icon:'🏠', label:'Casa de Amets' },
+    { icon:'🌿', label:'El Bosque Laberinto' },
+    { icon:'🩰', label:'Escuela de Ballet' },
+    { icon:'🏃', label:'El Camino Encantado' },
+    { icon:'💃', label:'El Teatro Mágico' },
+    { icon:'🚐', label:'La Carretera Mágica' },
+    { icon:'🎂', label:'Puerta del Cumpleaños' }
   ],
 
   init() {
     GAME._updateCakeBar();
     this._renderZones();
+    AUDIO.startMusic('menu');
 
     const btn = document.getElementById('btn-map-go');
-    btn.onclick = () => GAME.next();
+    btn.onclick = () => { AUDIO.click(); GAME.next(); };
   },
 
   _renderZones() {
-    const container = document.getElementById('map-zones');
-    container.innerHTML = '';
+    const c    = this.cakePieces = GAME.cakePieces;
+    const list = document.getElementById('map-zones');
+    list.innerHTML = '';
 
-    this.zones.forEach(z => {
-      const done   = GAME.step >  z.step;
-      const active = GAME.step === z.step || (GAME.step > z.step - 1 && !done);
-      const locked = !done && !active;
-
-      /* La zona "activa" es la que viene justo después del step actual */
-      const isCurrent = this._isCurrentZone(z);
+    this.zones.forEach((z, i) => {
+      const done    = i <= c;
+      const current = i === c + 1 || (i === 0 && c === 0);
+      const locked  = i > c + 1;
 
       const div = document.createElement('div');
-      div.className = 'zone-item' + (done ? ' done' : isCurrent ? ' active' : ' locked');
+      div.className = `zone-item${done ? ' done' : current ? ' active' : ' locked'}`;
 
-      const status = done ? '✅' : isCurrent ? '▶️' : '🔒';
+      const statusIcon = done ? '✅' : current ? '▶️' : '🔒';
 
       div.innerHTML = `
         <span class="zone-icon">${z.icon}</span>
         <span class="zone-label">${z.label}</span>
-        <span class="zone-status">${status}</span>
+        <span class="zone-status">${statusIcon}</span>
       `;
-      container.appendChild(div);
+      list.appendChild(div);
     });
-  },
-
-  /* Determina si la zona es la que toca a continuación */
-  _isCurrentZone(z) {
-    const nextStep = GAME.step + 1;
-    return z.step === nextStep || (z.step > GAME.step && this.zones.find(x => x.step > GAME.step && x.step <= z.step && x === z));
   }
 };

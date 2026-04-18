@@ -20,6 +20,22 @@
   --font:        'Segoe UI', 'Arial Rounded MT Bold', Arial, sans-serif;
 }
 
+/* ── Mute button (siempre visible) ── */
+#btn-mute {
+  position: fixed;
+  top: 10px; right: 12px;
+  z-index: 10000;
+  background: rgba(255,255,255,0.18);
+  border: 2px solid rgba(255,255,255,0.35);
+  border-radius: 50%;
+  width: 42px; height: 42px;
+  font-size: 1.3rem;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+  transition: background 0.2s;
+}
+#btn-mute:hover { background: rgba(255,255,255,0.35); }
+
 /* ── Reset ── */
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 html, body {
@@ -130,32 +146,36 @@ html, body {
 .pulse { animation: pulse 2s ease-in-out infinite; }
 
 /* ═══════════════════════════════════════════════
-   NARRATIVE
+   STORY (narrativa con personajes)
 ═══════════════════════════════════════════════ */
-#screen-narrative {
+#screen-story {
   background: linear-gradient(145deg, #0f172a, #1e1b4b, #312e81);
 }
-.narrative-wrap {
+.story-wrap {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px;
-  max-width: 560px;
+  gap: 18px;
+  max-width: 580px;
   width: 100%;
 }
-.lumi-wrap { text-align: center; }
-.lumi-avatar {
-  font-size: clamp(3.5rem, 12vw, 6rem);
+.story-char {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.story-avatar {
+  font-size: clamp(3rem, 11vw, 5.5rem);
   animation: float 3s ease-in-out infinite;
+  display: block;
 }
 @keyframes float {
   0%, 100% { transform: translateY(0); }
   50%       { transform: translateY(-10px); }
 }
-.lumi-name {
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: var(--c-gold);
+.story-name {
+  font-size: clamp(0.9rem, 2.8vw, 1.15rem);
+  font-weight: 900;
   letter-spacing: 2px;
   text-transform: uppercase;
 }
@@ -163,12 +183,32 @@ html, body {
   background: rgba(255,255,255,0.1);
   border: 2px solid rgba(255,255,255,0.25);
   border-radius: var(--radius);
-  padding: 20px 24px;
-  font-size: clamp(1rem, 3.5vw, 1.25rem);
-  line-height: 1.6;
+  padding: 20px 26px;
+  font-size: clamp(1rem, 3.5vw, 1.22rem);
+  line-height: 1.65;
   text-align: center;
   backdrop-filter: blur(6px);
+  min-height: 80px;
 }
+.story-nav {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.story-dots {
+  display: flex;
+  gap: 8px;
+}
+.dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.3);
+  display: inline-block;
+  transition: background 0.3s;
+}
+.dot.active { background: var(--c-gold); transform: scale(1.3); }
 
 /* ═══════════════════════════════════════════════
    MAP
@@ -335,8 +375,13 @@ canvas { border-radius: var(--radius); display: block; max-width: 100%; }
   justify-content: center;
 }
 .boss-avatar { font-size: clamp(2rem, 7vw, 3.5rem); }
-.boss-title  { font-size: clamp(1.2rem, 4vw, 1.8rem); font-weight: 900; }
+.boss-title  { font-size: clamp(1.1rem, 3.5vw, 1.7rem); font-weight: 900; }
+.boss-lore   { font-size: clamp(0.8rem, 2.5vw, 1rem); opacity: 0.65; font-style: italic; margin-top: 2px; }
 .boss-subtitle { text-align: center; font-size: clamp(0.95rem, 3vw, 1.2rem); opacity: 0.85; }
+
+/* Round dots (memory boss) */
+.round-dot { font-size: 1.2rem; transition: transform 0.2s; }
+.round-dot.done { transform: scale(1.25); }
 
 /* Progress bar */
 .progress-bar {
