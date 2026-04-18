@@ -135,7 +135,7 @@ document.addEventListener('keydown', e => {
   const scene = GAME.scenes[GAME.step];
 
   if (scene === 'level1') {
-    const d = { ArrowUp:[0,-1], ArrowDown:[0,1], ArrowLeft:[-1,0], ArrowRight:[1,0] };
+    const d = { ArrowUp:[0,-1,'up'], ArrowDown:[0,1,'down'], ArrowLeft:[-1,0,'left'], ArrowRight:[1,0,'right'] };
     if (d[e.key]) { e.preventDefault(); MazeScene.move(...d[e.key]); }
   }
   if (scene === 'level2') {
