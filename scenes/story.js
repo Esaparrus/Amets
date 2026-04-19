@@ -105,17 +105,26 @@ const StoryScene = {
     /* Avatar y nombre del personaje */
     const avatarEl = document.getElementById('story-avatar');
     avatarEl.innerHTML = '';
-    if (PORTRAITS && PORTRAITS[line.char]) {
-      const sz = Math.min(130, Math.floor(Math.min(window.innerWidth * 0.28, window.innerHeight * 0.22)));
-      const cvs = document.createElement('canvas');
-      cvs.width = cvs.height = sz;
-      cvs.className = 'story-avatar-img';
-      cvs.style.borderColor = char.color;
-      avatarEl.appendChild(cvs);
-      PORTRAITS[line.char](cvs.getContext('2d'), sz, sz);
-    } else {
-      avatarEl.textContent = char.emoji;
-    }
+    const sz = Math.min(130, Math.floor(Math.min(window.innerWidth * 0.28, window.innerHeight * 0.22)));
+    const imgEl = document.createElement('img');
+    imgEl.src = `data/${line.char}.png`;
+    imgEl.alt = char.name;
+    imgEl.className = 'story-avatar-img';
+    imgEl.style.borderColor = char.color;
+    imgEl.onerror = () => {
+      avatarEl.innerHTML = '';
+      if (PORTRAITS && PORTRAITS[line.char]) {
+        const cvs = document.createElement('canvas');
+        cvs.width = cvs.height = sz;
+        cvs.className = 'story-avatar-img';
+        cvs.style.borderColor = char.color;
+        avatarEl.appendChild(cvs);
+        PORTRAITS[line.char](cvs.getContext('2d'), sz, sz);
+      } else {
+        avatarEl.textContent = char.emoji;
+      }
+    };
+    avatarEl.appendChild(imgEl);
     const nameEl = document.getElementById('story-name');
     nameEl.textContent  = char.name;
     nameEl.style.color  = char.color;
