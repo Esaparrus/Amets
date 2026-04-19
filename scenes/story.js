@@ -4,11 +4,11 @@
 ============================================================ */
 
 const CHARACTERS = {
-  lumi:   { emoji: '🌟', name: 'Lumi',          color: '#fbbf24' },
-  arai:   { emoji: '🌸', name: 'Arai (tu hermana mayor)', color: '#f472b6' },
-  ainara: { emoji: '💜', name: 'Mamá Ainara',   color: '#a78bfa' },
-  mara:   { emoji: '🐣', name: 'Mara (tu hermana pequeña)', color: '#34d399' },
-  david:  { emoji: '⭐', name: 'Papá David',    color: '#60a5fa' }
+  lumi:   { emoji: '🌟', name: 'Lumi',                      color: '#fbbf24', img: 'assets/lumi.png'   },
+  arai:   { emoji: '🌸', name: 'Arai (tu hermana mayor)',   color: '#f472b6', img: 'assets/arai.png'   },
+  ainara: { emoji: '💜', name: 'Mamá Ainara',               color: '#a78bfa', img: 'assets/ainara.png' },
+  mara:   { emoji: '🐣', name: 'Mara (tu hermana pequeña)', color: '#34d399', img: 'assets/mara.png'   },
+  david:  { emoji: '⭐', name: 'Papá David',                color: '#60a5fa', img: 'assets/david.png'  }
 };
 
 /* Capítulos de historia, indexados por GAME.step cuando se llama a la escena */
@@ -103,7 +103,19 @@ const StoryScene = {
     const char = CHARACTERS[line.char] || CHARACTERS.lumi;
 
     /* Avatar y nombre del personaje */
-    document.getElementById('story-avatar').textContent = char.emoji;
+    const avatarEl = document.getElementById('story-avatar');
+    avatarEl.innerHTML = '';
+    if (char.img) {
+      const imgEl = document.createElement('img');
+      imgEl.src = char.img;
+      imgEl.alt = char.name;
+      imgEl.className = 'story-avatar-img';
+      imgEl.style.borderColor = char.color;
+      imgEl.onerror = () => { avatarEl.innerHTML = ''; avatarEl.textContent = char.emoji; };
+      avatarEl.appendChild(imgEl);
+    } else {
+      avatarEl.textContent = char.emoji;
+    }
     const nameEl = document.getElementById('story-name');
     nameEl.textContent  = char.name;
     nameEl.style.color  = char.color;

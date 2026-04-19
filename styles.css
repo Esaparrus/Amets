@@ -169,6 +169,16 @@ html, body {
   animation: float 3s ease-in-out infinite;
   display: block;
 }
+.story-avatar-img {
+  width:  clamp(90px, 26vw, 130px);
+  height: clamp(90px, 26vw, 130px);
+  border-radius: 18px;
+  object-fit: cover;
+  border: 3px solid #fff;
+  box-shadow: 0 0 18px rgba(255,255,255,0.35);
+  animation: float 3s ease-in-out infinite;
+  display: block;
+}
 @keyframes float {
   0%, 100% { transform: translateY(0); }
   50%       { transform: translateY(-10px); }
