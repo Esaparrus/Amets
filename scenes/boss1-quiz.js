@@ -1,6 +1,6 @@
 /* ============================================================
    BOSS 1 – MAESTRA DE BALLET  (y Boss 3 reutiliza _makeQuizScene)
-   Preguntas difíciles, 5 por boss, audio integrado
+   8 preguntas por boss, audio integrado, incluye series
 ============================================================ */
 
 const Boss1Scene = _makeQuizScene({
@@ -10,8 +10,8 @@ const Boss1Scene = _makeQuizScene({
   answersId:    'boss1-answers',
   hintId:       'boss1-hint',
   feedbackId:   'boss1-feedback',
-  categories:   ['matematicas', 'idioma'],
-  numQuestions: 5,
+  categories:   ['matematicas', 'idioma', 'series'],
+  numQuestions: 8,
   musicTheme:   'boss',
   onComplete() { GAME.addCakePiece(); AUDIO.levelComplete(); setTimeout(() => GAME.next(), 1400); }
 });
@@ -28,14 +28,16 @@ function _makeQuizScene(cfg) {
     okMsgs:  [
       '¡Correcto, Amets! 🎉', '¡Brillante! ✨',
       '¡Exacto! 🌟', '¡Muy bien pensado! 💫',
-      '¡Eso es! 🏆', '¡Genial! 👏'
+      '¡Eso es! 🏆', '¡Genial! 👏',
+      '¡Qué lista! 🧠', '¡Imparable! 🚀'
     ],
     errMsgs: [
       'Casi… piensa un poco más 🤔',
       'No pasa nada, vuelve a intentarlo 💪',
       'Hmm… revisa bien la pregunta',
       'Amets, casi lo tienes. ¡Tú puedes!',
-      'Un error más y te doy una pista 😉'
+      'Un error más y te doy una pista 😉',
+      '¡Fíjate bien, tú sabes esto! 👀'
     ],
 
     init() {

@@ -1,36 +1,36 @@
 /* ============================================================
-   NIVEL 1 – LABERINTO (estilo Pokémon)
+   NIVEL 1 – LABERINTO (estilo Pokémon, MODO DIFÍCIL)
+   • 5 laberintos de dificultad creciente, tamaño enorme
    • Generación procedural con recursive backtracker (DFS)
-   • Garantiza UN SOLO camino con muchos callejones sin salida
-   • 3 laberintos de dificultad creciente
+   • Sonidos ambientales del bosque
+   • Celda mínima 14px para permitir laberintos gigantes
 ============================================================ */
 
 const MazeScene = {
 
+  /* Laberintos cada vez más grandes — el último es enorme */
   CONFIGS: [
-    { cols: 13, rows: 11 },  // fácil
-    { cols: 15, rows: 13 },  // medio
-    { cols: 17, rows: 15 }   // difícil
+    { cols: 21, rows: 17 },   // 1 – mediano
+    { cols: 29, rows: 23 },   // 2 – grande
+    { cols: 37, rows: 31 },   // 3 – muy grande
+    { cols: 47, rows: 39 },   // 4 – difícil
+    { cols: 55, rows: 45 }    // 5 – brutal
   ],
 
-  TOTAL_MAZES: 3,
+  TOTAL_MAZES: 5,
 
   canvas:        null,
   ctx:           null,
   map:           null,
   player:        { x:1, y:1 },
-  cell:          28,
+  cell:          24,
   mazeLevel:     0,
   animFrame:     0,
   facing:        'down',
   transitioning: false,
 
-  /* ── Generador de laberinto perfecto (recursive backtracker) ──
-     Todas las celdas tienen coordenadas impares → son celdas visitables.
-     Las celdas pares son muros entre celdas.
-     Garantiza exactamente un camino entre cualquier par de celdas. */
+  /* ── Generador de laberinto perfecto (recursive backtracker) ── */
   _generateMaze(cols, rows) {
-    // cols y rows deben ser impares
     const grid = [];
     for (let r = 0; r < rows; r++) {
       grid[r] = [];
@@ -38,14 +38,16 @@ const MazeScene = {
     }
 
     const visited = [];
-    for (let r = 0; r < rows; r++) { visited[r] = []; for (let c = 0; c < cols; c++) visited[r][c] = false; }
+    for (let r = 0; r < rows; r++) {
+      visited[r] = [];
+      for (let c = 0; c < cols; c++) visited[r][c] = false;
+    }
 
+    const stack = [];
     const carve = (r, c) => {
       visited[r][c] = true;
       grid[r][c] = 0;
-      // Directions (step 2 to reach next cell)
       const dirs = [[-2,0],[2,0],[0,-2],[0,2]];
-      // Fisher-Yates shuffle
       for (let i = dirs.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [dirs[i], dirs[j]] = [dirs[j], dirs[i]];
@@ -53,16 +55,38 @@ const MazeScene = {
       for (const [dr, dc] of dirs) {
         const nr = r + dr, nc = c + dc;
         if (nr > 0 && nr < rows - 1 && nc > 0 && nc < cols - 1 && !visited[nr][nc]) {
-          // Carve the wall between
           grid[r + dr/2][c + dc/2] = 0;
           carve(nr, nc);
         }
       }
     };
 
-    carve(1, 1);
+    /* Usar iterativo para laberintos gigantes (evita stack overflow) */
+    visited[1][1] = true;
+    grid[1][1] = 0;
+    stack.push([1, 1]);
+    while (stack.length > 0) {
+      const [r, c] = stack[stack.length - 1];
+      const dirs = [[-2,0],[2,0],[0,-2],[0,2]];
+      for (let i = dirs.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [dirs[i], dirs[j]] = [dirs[j], dirs[i]];
+      }
+      let moved = false;
+      for (const [dr, dc] of dirs) {
+        const nr = r + dr, nc = c + dc;
+        if (nr > 0 && nr < rows - 1 && nc > 0 && nc < cols - 1 && !visited[nr][nc]) {
+          visited[nr][nc] = true;
+          grid[nr][nc] = 0;
+          grid[r + dr/2][c + dc/2] = 0;
+          stack.push([nr, nc]);
+          moved = true;
+          break;
+        }
+      }
+      if (!moved) stack.pop();
+    }
 
-    // Salida siempre en la última celda impar (esquina inferior-derecha)
     const exitR = rows - 2, exitC = cols - 2;
     grid[exitR][exitC] = 2;
 
@@ -76,7 +100,9 @@ const MazeScene = {
     this.transitioning = false;
     this._loadMaze(0);
     this._setupTouch();
+    /* Música más el ambiente de bosque */
     AUDIO.startMusic('level');
+    AUDIO.startAmbient('forest');
   },
 
   _loadMaze(level) {
@@ -90,11 +116,14 @@ const MazeScene = {
 
   _resize() {
     const rows = this.map.length, cols = this.map[0].length;
-    const maxW  = Math.min(window.innerWidth - 24, 520);
-    const maxH  = Math.min(window.innerHeight * 0.52, 440);
-    this.cell   = Math.max(20, Math.floor(Math.min(maxW / cols, maxH / rows)));
+    const maxW  = Math.min(window.innerWidth - 24, 560);
+    const maxH  = Math.min(window.innerHeight * 0.55, 460);
+    /* Celda mínima 14px — permite laberintos enormes en pantalla */
+    this.cell   = Math.max(14, Math.floor(Math.min(maxW / cols, maxH / rows)));
     this.canvas.width  = cols * this.cell;
     this.canvas.height = rows * this.cell;
+    this.canvas.style.width  = this.canvas.width  + 'px';
+    this.canvas.style.height = this.canvas.height + 'px';
   },
 
   _setupTouch() {
@@ -129,36 +158,36 @@ const MazeScene = {
 
       if (this.mazeLevel >= this.TOTAL_MAZES - 1) {
         AUDIO.levelComplete();
-        this._drawMessage('¡Bosque superado! 🎉');
-        setTimeout(() => { GAME.addCakePiece(); GAME.next(); }, 1200);
+        this._drawMessage('¡¡Bosque superado!! 🎉🌟');
+        setTimeout(() => { GAME.addCakePiece(); GAME.next(); }, 1400);
       } else {
         this.mazeLevel++;
-        this._drawMessage(`¡Laberinto ${this.mazeLevel} de ${this.TOTAL_MAZES} superado! 🌟`);
+        this._drawMessage(`✅ ¡Laberinto ${this.mazeLevel} / ${this.TOTAL_MAZES} superado! El siguiente es más difícil…`);
         setTimeout(() => {
           this.transitioning = false;
           this._loadMaze(this.mazeLevel);
-        }, 1400);
+        }, 1800);
       }
     }
   },
 
   _drawMessage(msg) {
     const { ctx, canvas } = this;
-    ctx.fillStyle = 'rgba(0,0,0,0.55)';
-    ctx.fillRect(0, canvas.height/2 - 32, canvas.width, 64);
+    ctx.fillStyle = 'rgba(0,0,0,0.68)';
+    ctx.fillRect(0, canvas.height/2 - 38, canvas.width, 76);
     ctx.fillStyle = '#FFD700';
-    ctx.font      = `bold ${Math.max(14, Math.floor(canvas.width/20))}px sans-serif`;
+    ctx.font      = `bold ${Math.max(13, Math.floor(canvas.width/22))}px sans-serif`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText(msg, canvas.width/2, canvas.height/2);
   },
 
   draw() {
-    const { ctx, map, cell } = this;
+    const { ctx, map, cell: C } = this;
     const rows = map.length, cols = map[0].length;
-    const C = this.cell;
 
-    ctx.fillStyle = '#2d6a2d';
+    /* Fondo base oscuro del bosque */
+    ctx.fillStyle = '#1a3d1a';
     ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
     for (let r = 0; r < rows; r++) {
@@ -183,121 +212,150 @@ const MazeScene = {
   },
 
   _drawTree(ctx, x, y, C) {
-    ctx.fillStyle = '#1a3d1a';
+    /* Suelo oscuro */
+    ctx.fillStyle = '#0f2b0f';
     ctx.fillRect(x, y, C, C);
 
-    ctx.fillStyle = '#1f6b1f';
+    /* Copa del árbol */
+    ctx.fillStyle = '#1a4a1a';
     ctx.beginPath();
-    ctx.arc(x + C*0.5, y + C*0.48, C*0.44, 0, Math.PI*2);
+    ctx.arc(x + C*0.5, y + C*0.50, C*0.46, 0, Math.PI*2);
     ctx.fill();
 
-    ctx.fillStyle = '#2d8a2d';
+    /* Capa media */
+    ctx.fillStyle = '#216621';
     ctx.beginPath();
-    ctx.arc(x + C*0.46, y + C*0.40, C*0.28, 0, Math.PI*2);
+    ctx.arc(x + C*0.46, y + C*0.40, C*0.30, 0, Math.PI*2);
     ctx.fill();
 
-    ctx.fillStyle = 'rgba(100,200,80,0.25)';
-    ctx.beginPath();
-    ctx.arc(x + C*0.4, y + C*0.34, C*0.13, 0, Math.PI*2);
-    ctx.fill();
+    /* Brillo */
+    if (C >= 18) {
+      ctx.fillStyle = 'rgba(80,200,60,0.20)';
+      ctx.beginPath();
+      ctx.arc(x + C*0.38, y + C*0.30, C*0.14, 0, Math.PI*2);
+      ctx.fill();
+    }
 
-    ctx.fillStyle = '#6b3a1f';
-    ctx.fillRect(x + C*0.38, y + C*0.74, C*0.24, C*0.26);
+    /* Tronco (solo visible en celdas grandes) */
+    if (C >= 16) {
+      ctx.fillStyle = '#5a2e10';
+      ctx.fillRect(x + C*0.39, y + C*0.74, C*0.22, C*0.26);
+    }
   },
 
   _drawPath(ctx, x, y, C, r, c) {
-    ctx.fillStyle = '#c8a96e';
+    /* Tierra del sendero */
+    ctx.fillStyle = '#b8945a';
     ctx.fillRect(x, y, C, C);
 
-    ctx.fillStyle = 'rgba(120,90,50,0.12)';
+    /* Textura sutil (piedrecitas) */
+    ctx.fillStyle = 'rgba(90,60,30,0.15)';
     if ((r * 7 + c * 3) % 5 === 0) {
       ctx.beginPath();
-      ctx.arc(x + C*0.3, y + C*0.35, C*0.07, 0, Math.PI*2);
+      ctx.arc(x + C*0.28, y + C*0.35, C*0.07, 0, Math.PI*2);
       ctx.fill();
     }
     if ((r * 3 + c * 11) % 7 === 0) {
       ctx.beginPath();
-      ctx.arc(x + C*0.7, y + C*0.65, C*0.05, 0, Math.PI*2);
+      ctx.arc(x + C*0.72, y + C*0.65, C*0.05, 0, Math.PI*2);
       ctx.fill();
+    }
+    /* Hierba al borde */
+    if ((r + c) % 3 === 0 && C >= 16) {
+      ctx.fillStyle = 'rgba(60,140,40,0.18)';
+      ctx.fillRect(x, y, C*0.06, C);
+      ctx.fillRect(x + C*0.94, y, C*0.06, C);
     }
   },
 
   _drawExit(ctx, x, y, C) {
-    const t = Date.now() / 400;
+    const t = Date.now() / 350;
     const glow = 0.5 + 0.5 * Math.sin(t);
-    ctx.fillStyle = `rgba(255,215,0,${0.3 + glow * 0.25})`;
+
+    /* Brillo pulsante dorado */
+    ctx.fillStyle = `rgba(255,215,0,${0.25 + glow * 0.30})`;
     ctx.fillRect(x, y, C, C);
 
+    /* Puerta de madera */
+    ctx.fillStyle = '#6b3010';
+    ctx.fillRect(x + C*0.15, y + C*0.08, C*0.70, C*0.88);
     ctx.fillStyle = '#8B4513';
-    ctx.fillRect(x + C*0.2, y + C*0.1, C*0.6, C*0.85);
-    ctx.fillStyle = '#A0522D';
-    ctx.fillRect(x + C*0.23, y + C*0.13, C*0.54, C*0.79);
+    ctx.fillRect(x + C*0.19, y + C*0.12, C*0.62, C*0.80);
 
+    /* Pomo dorado */
     ctx.fillStyle = '#FFD700';
     ctx.beginPath();
-    ctx.arc(x + C*0.65, y + C*0.55, C*0.07, 0, Math.PI*2);
+    ctx.arc(x + C*0.68, y + C*0.54, C >= 16 ? C*0.08 : 3, 0, Math.PI*2);
     ctx.fill();
 
-    ctx.font = `${Math.floor(C*0.38)}px serif`;
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText('⭐', x + C*0.5, y + C*0.06);
+    /* Estrella encima */
+    if (C >= 14) {
+      ctx.font = `${Math.floor(C*0.40)}px serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('⭐', x + C*0.5, y + C*0.05 + C*0.20);
+    }
   },
 
   _drawCharacter(ctx, x, y, C) {
     const cx = x + C/2, cy = y + C/2;
-    const s  = C * 0.36;
+    const s  = C * 0.38;
     const f  = Math.floor(this.animFrame / 2) % 2;
 
     ctx.save();
     ctx.translate(cx, cy);
 
-    ctx.fillStyle = 'rgba(0,0,0,0.18)';
+    /* Sombra */
+    ctx.fillStyle = 'rgba(0,0,0,0.22)';
     ctx.beginPath();
-    ctx.ellipse(0, s*0.62, s*0.45, s*0.16, 0, 0, Math.PI*2);
+    ctx.ellipse(0, s*0.65, s*0.46, s*0.16, 0, 0, Math.PI*2);
     ctx.fill();
 
+    /* Piernas */
     ctx.fillStyle = '#1e40af';
     if (f === 0) {
-      ctx.fillRect(-s*0.28, s*0.3, s*0.22, s*0.45);
-      ctx.fillRect(s*0.06,  s*0.3, s*0.22, s*0.45);
+      ctx.fillRect(-s*0.28, s*0.30, s*0.22, s*0.46);
+      ctx.fillRect( s*0.06, s*0.30, s*0.22, s*0.46);
     } else {
-      ctx.fillRect(-s*0.35, s*0.22, s*0.22, s*0.48);
-      ctx.fillRect(s*0.13,  s*0.38, s*0.22, s*0.45);
+      ctx.fillRect(-s*0.35, s*0.22, s*0.22, s*0.49);
+      ctx.fillRect( s*0.13, s*0.38, s*0.22, s*0.45);
     }
 
+    /* Zapatillas */
     ctx.fillStyle = '#111827';
     if (f === 0) {
-      ctx.fillRect(-s*0.3,  s*0.7,  s*0.26, s*0.14);
-      ctx.fillRect(s*0.04,  s*0.7,  s*0.26, s*0.14);
+      ctx.fillRect(-s*0.30, s*0.70, s*0.26, s*0.14);
+      ctx.fillRect( s*0.04, s*0.70, s*0.26, s*0.14);
     } else {
       ctx.fillRect(-s*0.37, s*0.65, s*0.26, s*0.14);
-      ctx.fillRect(s*0.11,  s*0.78, s*0.26, s*0.14);
+      ctx.fillRect( s*0.11, s*0.78, s*0.26, s*0.14);
     }
 
+    /* Cuerpo (jersey morado) */
     ctx.fillStyle = '#7c3aed';
     ctx.beginPath();
-    ctx.roundRect(-s*0.42, -s*0.18, s*0.84, s*0.56, s*0.1);
+    ctx.roundRect(-s*0.42, -s*0.18, s*0.84, s*0.56, s*0.10);
     ctx.fill();
-
     ctx.fillStyle = '#5b21b6';
-    ctx.fillRect(-s*0.42, s*0.2, s*0.84, s*0.08);
+    ctx.fillRect(-s*0.42, s*0.20, s*0.84, s*0.08);
 
+    /* Brazos */
     ctx.fillStyle = '#7c3aed';
     if (f === 0) {
       ctx.fillRect(-s*0.62, -s*0.14, s*0.22, s*0.42);
-      ctx.fillRect( s*0.4,  -s*0.14, s*0.22, s*0.42);
+      ctx.fillRect( s*0.40, -s*0.14, s*0.22, s*0.42);
     } else {
       ctx.fillRect(-s*0.62, -s*0.24, s*0.22, s*0.42);
-      ctx.fillRect( s*0.4,  -s*0.04, s*0.22, s*0.42);
+      ctx.fillRect( s*0.40, -s*0.04, s*0.22, s*0.42);
     }
 
-    ctx.fillStyle = '#fbbf24';
+    /* Manos */
+    ctx.fillStyle = '#f9c784';
     ctx.beginPath();
-    ctx.arc(-s*0.51, f === 0 ? s*0.3 : s*0.2, s*0.12, 0, Math.PI*2);
+    ctx.arc(-s*0.51, f === 0 ? s*0.30 : s*0.20, s*0.12, 0, Math.PI*2);
     ctx.fill();
     ctx.beginPath();
-    ctx.arc(s*0.51,  f === 0 ? s*0.3 : s*0.4, s*0.12, 0, Math.PI*2);
+    ctx.arc( s*0.51, f === 0 ? s*0.30 : s*0.40, s*0.12, 0, Math.PI*2);
     ctx.fill();
 
     /* Cuello */
@@ -310,15 +368,12 @@ const MazeScene = {
     ctx.arc(0, -s*0.58, s*0.36, 0, Math.PI*2);
     ctx.fill();
 
-    /* Pelo – base castaño-miel */
+    /* Pelo castaño-miel */
     ctx.fillStyle = '#c49040';
     ctx.beginPath();
     ctx.arc(0, -s*0.68, s*0.37, Math.PI*0.85, Math.PI*2.15);
     ctx.fill();
     ctx.fillRect(-s*0.37, -s*0.64, s*0.74, s*0.20);
-
-    /* Pelo largo a los lados */
-    ctx.fillStyle = '#c49040';
     ctx.beginPath();
     ctx.ellipse(-s*0.38, -s*0.38, s*0.14, s*0.38, -0.18, 0, Math.PI*2);
     ctx.fill();
@@ -326,52 +381,30 @@ const MazeScene = {
     ctx.ellipse( s*0.38, -s*0.38, s*0.14, s*0.38,  0.18, 0, Math.PI*2);
     ctx.fill();
 
-    /* Mechones rubios (highlights) */
-    ctx.fillStyle = '#e8c260';
-    ctx.beginPath();
-    ctx.ellipse(-s*0.12, -s*0.64, s*0.05, s*0.18, -0.1, 0, Math.PI*2);
-    ctx.fill();
-    ctx.beginPath();
-    ctx.ellipse( s*0.16, -s*0.66, s*0.04, s*0.14,  0.1, 0, Math.PI*2);
-    ctx.fill();
-
-    /* Ojos azul-verdosos */
+    /* Ojos */
     ctx.fillStyle = '#5ba8c8';
     ctx.beginPath();
     ctx.arc(-s*0.12, -s*0.57, s*0.075, 0, Math.PI*2);
     ctx.arc( s*0.12, -s*0.57, s*0.075, 0, Math.PI*2);
     ctx.fill();
-    /* Pupila */
     ctx.fillStyle = '#1a3a50';
     ctx.beginPath();
     ctx.arc(-s*0.12, -s*0.57, s*0.04, 0, Math.PI*2);
     ctx.arc( s*0.12, -s*0.57, s*0.04, 0, Math.PI*2);
     ctx.fill();
-    /* Brillo en ojos */
     ctx.fillStyle = 'white';
     ctx.beginPath();
     ctx.arc(-s*0.095, -s*0.59, s*0.02, 0, Math.PI*2);
     ctx.arc( s*0.135, -s*0.59, s*0.02, 0, Math.PI*2);
     ctx.fill();
 
-    /* Sonrisa con diente que falta (detalle especial de Amets 😄) */
+    /* Sonrisa */
     ctx.fillStyle = 'white';
     ctx.beginPath();
     ctx.arc(0, -s*0.44, s*0.13, 0, Math.PI);
     ctx.fill();
-    /* Hueco del diente que le falta */
     ctx.fillStyle = '#f9c784';
     ctx.fillRect(-s*0.015, -s*0.44, s*0.045, s*0.07);
-    /* Línea entre dientes */
-    ctx.strokeStyle = '#dda0a0';
-    ctx.lineWidth = s * 0.02;
-    ctx.beginPath();
-    ctx.moveTo(-s*0.06, -s*0.44);
-    ctx.lineTo(-s*0.06, -s*0.37);
-    ctx.moveTo( s*0.06, -s*0.44);
-    ctx.lineTo( s*0.06, -s*0.37);
-    ctx.stroke();
-    /* Labios */
     ctx.strokeStyle = '#d47080';
     ctx.lineWidth   = s * 0.035;
     ctx.beginPath();
@@ -384,12 +417,14 @@ const MazeScene = {
   _drawHUD() {
     const { ctx, canvas, mazeLevel, TOTAL_MAZES } = this;
     const text = `🌿 Laberinto ${mazeLevel + 1} / ${TOTAL_MAZES}`;
-    ctx.fillStyle = 'rgba(0,0,0,0.45)';
-    ctx.fillRect(4, 4, 160, 24);
+    const diffLabels = ['Fácil','Medio','Difícil','Muy difícil','¡Brutal!'];
+    const diff = diffLabels[mazeLevel] || '';
+    ctx.fillStyle = 'rgba(0,0,0,0.55)';
+    ctx.fillRect(4, 4, 220, 28);
     ctx.fillStyle = '#FFD700';
     ctx.font      = `bold 13px sans-serif`;
     ctx.textAlign = 'left';
     ctx.textBaseline = 'middle';
-    ctx.fillText(text, 10, 16);
+    ctx.fillText(`${text}  [${diff}]`, 10, 18);
   }
 };
