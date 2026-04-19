@@ -300,30 +300,82 @@ const MazeScene = {
     ctx.arc(s*0.51,  f === 0 ? s*0.3 : s*0.4, s*0.12, 0, Math.PI*2);
     ctx.fill();
 
-    ctx.fillStyle = '#fbbf24';
+    /* Cuello */
+    ctx.fillStyle = '#f9c784';
     ctx.fillRect(-s*0.12, -s*0.28, s*0.24, s*0.14);
 
-    ctx.fillStyle = '#fbbf24';
+    /* Cabeza */
+    ctx.fillStyle = '#f9c784';
     ctx.beginPath();
     ctx.arc(0, -s*0.58, s*0.36, 0, Math.PI*2);
     ctx.fill();
 
-    ctx.fillStyle = '#92400e';
+    /* Pelo – base castaño-miel */
+    ctx.fillStyle = '#c49040';
     ctx.beginPath();
-    ctx.arc(0, -s*0.68, s*0.36, Math.PI*0.9, Math.PI*2.1);
+    ctx.arc(0, -s*0.68, s*0.37, Math.PI*0.85, Math.PI*2.15);
     ctx.fill();
-    ctx.fillRect(-s*0.36, -s*0.62, s*0.72, s*0.18);
+    ctx.fillRect(-s*0.37, -s*0.64, s*0.74, s*0.20);
 
-    ctx.fillStyle = '#1f2937';
+    /* Pelo largo a los lados */
+    ctx.fillStyle = '#c49040';
     ctx.beginPath();
-    ctx.arc(-s*0.12, -s*0.56, s*0.06, 0, Math.PI*2);
-    ctx.arc( s*0.12, -s*0.56, s*0.06, 0, Math.PI*2);
+    ctx.ellipse(-s*0.38, -s*0.38, s*0.14, s*0.38, -0.18, 0, Math.PI*2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.ellipse( s*0.38, -s*0.38, s*0.14, s*0.38,  0.18, 0, Math.PI*2);
     ctx.fill();
 
-    ctx.strokeStyle = '#92400e';
-    ctx.lineWidth   = s*0.04;
+    /* Mechones rubios (highlights) */
+    ctx.fillStyle = '#e8c260';
     ctx.beginPath();
-    ctx.arc(0, -s*0.46, s*0.1, 0.2, Math.PI - 0.2);
+    ctx.ellipse(-s*0.12, -s*0.64, s*0.05, s*0.18, -0.1, 0, Math.PI*2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.ellipse( s*0.16, -s*0.66, s*0.04, s*0.14,  0.1, 0, Math.PI*2);
+    ctx.fill();
+
+    /* Ojos azul-verdosos */
+    ctx.fillStyle = '#5ba8c8';
+    ctx.beginPath();
+    ctx.arc(-s*0.12, -s*0.57, s*0.075, 0, Math.PI*2);
+    ctx.arc( s*0.12, -s*0.57, s*0.075, 0, Math.PI*2);
+    ctx.fill();
+    /* Pupila */
+    ctx.fillStyle = '#1a3a50';
+    ctx.beginPath();
+    ctx.arc(-s*0.12, -s*0.57, s*0.04, 0, Math.PI*2);
+    ctx.arc( s*0.12, -s*0.57, s*0.04, 0, Math.PI*2);
+    ctx.fill();
+    /* Brillo en ojos */
+    ctx.fillStyle = 'white';
+    ctx.beginPath();
+    ctx.arc(-s*0.095, -s*0.59, s*0.02, 0, Math.PI*2);
+    ctx.arc( s*0.135, -s*0.59, s*0.02, 0, Math.PI*2);
+    ctx.fill();
+
+    /* Sonrisa con diente que falta (detalle especial de Amets 😄) */
+    ctx.fillStyle = 'white';
+    ctx.beginPath();
+    ctx.arc(0, -s*0.44, s*0.13, 0, Math.PI);
+    ctx.fill();
+    /* Hueco del diente que le falta */
+    ctx.fillStyle = '#f9c784';
+    ctx.fillRect(-s*0.015, -s*0.44, s*0.045, s*0.07);
+    /* Línea entre dientes */
+    ctx.strokeStyle = '#dda0a0';
+    ctx.lineWidth = s * 0.02;
+    ctx.beginPath();
+    ctx.moveTo(-s*0.06, -s*0.44);
+    ctx.lineTo(-s*0.06, -s*0.37);
+    ctx.moveTo( s*0.06, -s*0.44);
+    ctx.lineTo( s*0.06, -s*0.37);
+    ctx.stroke();
+    /* Labios */
+    ctx.strokeStyle = '#d47080';
+    ctx.lineWidth   = s * 0.035;
+    ctx.beginPath();
+    ctx.arc(0, -s*0.44, s*0.13, 0.05, Math.PI - 0.05);
     ctx.stroke();
 
     ctx.restore();
