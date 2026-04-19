@@ -175,9 +175,10 @@ document.addEventListener('DOMContentLoaded', () => {
     GAME.restart();
   });
 
-  /* Inicializar audio en primer gesto (necesario en móvil) */
-  document.addEventListener('click', () => AUDIO.init(), { once: true });
-  document.addEventListener('touchstart', () => AUDIO.init(), { once: true });
+  /* Inicializar y reanudar audio en cada gesto — crítico en iOS/Safari */
+  const _audioWake = () => AUDIO.init();
+  document.addEventListener('click',      _audioWake);
+  document.addEventListener('touchstart', _audioWake, { passive: true });
 
   GAME.init();
 });

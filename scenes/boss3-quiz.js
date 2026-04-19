@@ -10,8 +10,8 @@ const Boss3Scene = _makeQuizScene({
   answersId:    'boss3-answers',
   hintId:       'boss3-hint',
   feedbackId:   'boss3-feedback',
-  categories:   ['matematicas', 'idioma', 'cultura'],
-  numQuestions: 6,
+  categories:   ['matematicas', 'idioma', 'cultura', 'series'],
+  numQuestions: 8,
   musicTheme:   'boss',
   onComplete() { GAME.addCakePiece(); AUDIO.levelComplete(); setTimeout(() => GAME.next(), 1400); }
 });

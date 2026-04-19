@@ -1,7 +1,9 @@
 /* ============================================================
-   BANCO DE PREGUNTAS v3
+   BANCO DE PREGUNTAS v4
    – Inglés simplificado (nivel 9 años)
-   – Cultura general nivel 15 años + Navarra + Arazuri
+   – Matemáticas nivel 9-10 años
+   – Cultura general + Navarra + Arazuri
+   – Series / seguir la secuencia (nuevo)
 ============================================================ */
 
 const QUESTIONS = {
@@ -30,12 +32,6 @@ const QUESTIONS = {
       opts: ["8", "10", "12"],
       a: 1,
       hint: "El 25% es la cuarta parte: 40 ÷ 4 = ?"
-    },
-    {
-      q: "¿Qué número falta? 1, 4, 9, 16, ___",
-      opts: ["20", "25", "24"],
-      a: 1,
-      hint: "Son los cuadrados perfectos: 1², 2², 3², 4², 5² = ?"
     },
     {
       q: "Arai tiene el doble de años que Mara. Mara tiene 7 años. ¿Cuántos años tienen entre las dos?",
@@ -78,6 +74,24 @@ const QUESTIONS = {
       opts: ["No, son 8", "Sí, son 7", "No, son 9"],
       a: 0,
       hint: "Suma: 1 + 2 + 2 + 3 = ?"
+    },
+    {
+      q: "En una clase hay 30 alumnos. El 60% saca notable. ¿Cuántos alumnos sacaron notable?",
+      opts: ["15", "18", "20"],
+      a: 1,
+      hint: "El 60% de 30: 30 × 0.6 = ?, o también 30 ÷ 10 × 6 = ?"
+    },
+    {
+      q: "¿Cuánto es el área de un rectángulo de 7 cm de largo y 4 cm de ancho?",
+      opts: ["22 cm²", "28 cm²", "11 cm²"],
+      a: 1,
+      hint: "Área = largo × ancho: 7 × 4 = ?"
+    },
+    {
+      q: "¿Cuántos minutos hay en 2 horas y media?",
+      opts: ["120", "150", "140"],
+      a: 1,
+      hint: "2 horas = 120 minutos. Media hora = 30 minutos. Suma ambos."
     }
   ],
 
@@ -100,12 +114,6 @@ const QUESTIONS = {
       opts: ["Blue", "Green", "Red"],
       a: 2,
       hint: "Las rosas son de color '___'"
-    },
-    {
-      q: "¿Cómo se dice 'gato' en inglés?",
-      opts: ["Fish", "Cat", "Horse"],
-      a: 1,
-      hint: "Empieza por C y tiene 3 letras"
     },
     {
       q: "¿Qué significa 'happy' en español?",
@@ -154,12 +162,23 @@ const QUESTIONS = {
       opts: ["Ruidosa", "Pequeña", "Bonita / Preciosa"],
       a: 2,
       hint: "Lo que dicen de Amets cuando baila ballet 💃"
+    },
+    {
+      q: "¿Cómo se dice 'árbol' en inglés?",
+      opts: ["Flower", "Tree", "Grass"],
+      a: 1,
+      hint: "Empieza por T, tiene 4 letras"
+    },
+    {
+      q: "¿Qué significa 'run' en español?",
+      opts: ["Saltar", "Correr", "Nadar"],
+      a: 1,
+      hint: "Lo que hace Amets en el nivel del camino encantado 🏃"
     }
   ],
 
-  /* ── Cultura general (nivel 15 años + Navarra + Arazuri) ── */
+  /* ── Cultura general (Navarra + general) ── */
   cultura: [
-    /* ── Navarra y Arazuri ── */
     {
       q: "¿Cuál es la capital de Navarra?",
       opts: ["Logroño", "Pamplona", "Tudela"],
@@ -173,7 +192,7 @@ const QUESTIONS = {
       hint: "Se celebran del 6 al 14 de julio. ¡Con encierros de toros!"
     },
     {
-      q: "¿Qué río pasa por Pamplona, la ciudad más cercana a Arazuri?",
+      q: "¿Qué río pasa por Pamplona?",
       opts: ["Ebro", "Arga", "Bidasoa"],
       a: 1,
       hint: "Empieza por A y pasa bajo el puente de la Magdalena"
@@ -185,59 +204,28 @@ const QUESTIONS = {
       hint: "Es la Comunidad Foral, con capital en Pamplona"
     },
     {
-      q: "¿Qué idioma cooficial se habla en algunas zonas de Navarra además del español?",
+      q: "¿Qué idioma cooficial se habla en algunas zonas de Navarra?",
       opts: ["Catalán", "Gallego", "Euskera"],
       a: 2,
       hint: "También se llama vasco y se habla en el País Vasco"
     },
     {
-      q: "El escudo de Navarra lleva unas cadenas de oro sobre fondo rojo. ¿Qué batalla recuerdan?",
-      opts: ["La batalla de Roncesvalles", "La batalla de las Navas de Tolosa", "La batalla de Lepanto"],
-      a: 1,
-      hint: "Fue en 1212 y Navarra participó junto a otros reinos cristianos"
-    },
-    {
-      q: "¿A cuántos kilómetros aproximadamente está Arazuri del centro de Pamplona?",
-      opts: ["20 km", "8 km", "35 km"],
-      a: 1,
-      hint: "Es un pueblo muy cercano, casi un barrio de la capital"
-    },
-    /* ── Cultura general nivel 15 años ── */
-    {
-      q: "¿En qué año cayó el Muro de Berlín?",
-      opts: ["1979", "1989", "1999"],
-      a: 1,
-      hint: "Fue al final de los años 80. Alemania se reunificó ese año."
-    },
-    {
-      q: "¿Quién pintó La Gioconda, también conocida como la Mona Lisa?",
+      q: "¿Quién pintó La Gioconda (la Mona Lisa)?",
       opts: ["Miguel Ángel", "Rafael", "Leonardo da Vinci"],
       a: 2,
-      hint: "También diseñó máquinas voladoras y helicópteros en el siglo XV"
+      hint: "También diseñó máquinas voladoras en el siglo XV"
     },
     {
       q: "¿Cuántos planetas tiene el Sistema Solar actualmente?",
       opts: ["9", "8", "10"],
       a: 1,
-      hint: "En 2006 reclasificaron a Plutón como planeta enano y quedaron 8"
-    },
-    {
-      q: "¿Qué elemento químico es el más abundante en el universo?",
-      opts: ["Oxígeno", "Helio", "Hidrógeno"],
-      a: 2,
-      hint: "Es el más ligero de todos. Con él funciona el Sol."
-    },
-    {
-      q: "¿En qué año empezó la Primera Guerra Mundial?",
-      opts: ["1912", "1914", "1918"],
-      a: 1,
-      hint: "Empezó en el 14 y terminó en el 18. Recuerda el año de inicio."
+      hint: "En 2006 reclasificaron a Plutón como planeta enano"
     },
     {
       q: "¿Cuál es el planeta más cercano al Sol?",
       opts: ["Venus", "Marte", "Mercurio"],
       a: 2,
-      hint: "Es el planeta más pequeño del Sistema Solar y el más rápido"
+      hint: "Es el planeta más pequeño del Sistema Solar"
     },
     {
       q: "¿Cuántos cromosomas tiene una célula humana normal?",
@@ -249,7 +237,19 @@ const QUESTIONS = {
       q: "¿Qué escritor español creó al personaje de Don Quijote?",
       opts: ["Federico García Lorca", "Miguel de Cervantes", "Francisco de Quevedo"],
       a: 1,
-      hint: "Vivió entre 1547 y 1616 y es el autor más famoso de España"
+      hint: "Vivió entre 1547 y 1616, es el autor más famoso de España"
+    },
+    {
+      q: "¿En qué continente está España?",
+      opts: ["América", "África", "Europa"],
+      a: 2,
+      hint: "Es el mismo continente que Francia, Italia y Alemania"
+    },
+    {
+      q: "¿Cuántos lados tiene un hexágono?",
+      opts: ["5", "7", "6"],
+      a: 2,
+      hint: "Las celdas de los panales de abeja tienen esa forma"
     },
     {
       q: "¿Cuál es tu tío favorito? (sé sincera 😏)",
@@ -258,13 +258,107 @@ const QUESTIONS = {
       hint: "Empieza por U… ¡ya sabes quién es! 😄",
       forced: true
     }
+  ],
+
+  /* ── Series / Seguir la secuencia ── */
+  series: [
+    {
+      q: "¿Qué número sigue? 2, 4, 6, 8, ___",
+      opts: ["9", "10", "12"],
+      a: 1,
+      hint: "Suma 2 cada vez: 2→4→6→8→?"
+    },
+    {
+      q: "¿Qué número sigue? 5, 10, 15, 20, ___",
+      opts: ["22", "25", "30"],
+      a: 1,
+      hint: "La tabla del 5: suma 5 cada vez"
+    },
+    {
+      q: "¿Qué número sigue? 100, 90, 80, 70, ___",
+      opts: ["65", "60", "55"],
+      a: 1,
+      hint: "Resta 10 cada vez: 100→90→80→70→?"
+    },
+    {
+      q: "¿Qué número sigue? 3, 6, 12, 24, ___",
+      opts: ["36", "30", "48"],
+      a: 2,
+      hint: "Multiplica por 2 cada vez: 3→6→12→24→?"
+    },
+    {
+      q: "¿Qué número sigue? 1, 1, 2, 3, 5, ___",
+      opts: ["6", "7", "8"],
+      a: 2,
+      hint: "Suma los dos anteriores: 3+5 = ?"
+    },
+    {
+      q: "¿Qué número sigue? 1, 4, 9, 16, ___",
+      opts: ["20", "25", "24"],
+      a: 1,
+      hint: "Son los cuadrados perfectos: 1², 2², 3², 4², 5² = ?"
+    },
+    {
+      q: "¿Qué número sigue? 2, 4, 8, 16, ___",
+      opts: ["24", "30", "32"],
+      a: 2,
+      hint: "Potencias de 2: 2¹, 2², 2³, 2⁴, 2⁵ = ?"
+    },
+    {
+      q: "¿Qué número sigue? 10, 8, 6, 4, ___",
+      opts: ["3", "2", "1"],
+      a: 1,
+      hint: "Resta 2 cada vez: 10→8→6→4→?"
+    },
+    {
+      q: "¿Qué número sigue? 1, 2, 4, 7, 11, ___",
+      opts: ["14", "15", "16"],
+      a: 2,
+      hint: "Sumas +1, +2, +3, +4, +5: 11+5 = ?"
+    },
+    {
+      q: "¿Qué mes sigue? Enero, Febrero, Marzo, Abril, ___",
+      opts: ["Junio", "Mayo", "Agosto"],
+      a: 1,
+      hint: "El quinto mes del año"
+    },
+    {
+      q: "¿Qué sigue? Lunes, Martes, Miércoles, Jueves, ___",
+      opts: ["Sábado", "Domingo", "Viernes"],
+      a: 2,
+      hint: "El quinto día de la semana laboral"
+    },
+    {
+      q: "¿Qué número sigue? 1, 10, 100, 1000, ___",
+      opts: ["10000", "2000", "9000"],
+      a: 0,
+      hint: "Multiplica por 10 cada vez: 1000×10 = ?"
+    },
+    {
+      q: "¿Qué letra sigue? A, C, E, G, ___",
+      opts: ["H", "I", "J"],
+      a: 1,
+      hint: "Saltas una letra cada vez: A, (B), C, (D), E, (F), G, (H), ?"
+    },
+    {
+      q: "¿Qué número sigue? 64, 32, 16, 8, ___",
+      opts: ["6", "5", "4"],
+      a: 2,
+      hint: "Divide entre 2 cada vez: 8÷2 = ?"
+    },
+    {
+      q: "¿Qué figura sigue? Triángulo (3), Cuadrado (4), Pentágono (5), ___",
+      opts: ["Octágono (8)", "Heptágono (7)", "Hexágono (6)"],
+      a: 2,
+      hint: "Suma un lado cada vez: 3→4→5→?"
+    }
   ]
 };
 
 /* Función: N preguntas aleatorias mezclando categorías
-   Las preguntas con forced:true siempre aparecen, en posición aleatoria */
+   Las preguntas con forced:true siempre aparecen */
 function getRandomQuestions(n, categories) {
-  categories = categories || ['matematicas', 'idioma', 'cultura'];
+  categories = categories || ['matematicas', 'idioma', 'cultura', 'series'];
   let pool = [];
   categories.forEach(cat => {
     if (QUESTIONS[cat]) pool = pool.concat(QUESTIONS[cat]);
