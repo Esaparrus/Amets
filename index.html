@@ -181,7 +181,22 @@
 ══════════════════════════════════════════ -->
 <div id="screen-final" class="screen">
   <canvas id="canvas-confetti"></canvas>
-  <div class="final-content">
+
+  <!-- Fase 1: conversación familiar -->
+  <div id="final-chat" class="story-wrap">
+    <div class="story-char" id="final-chat-char">
+      <span class="story-avatar" id="final-chat-avatar">🎂</span>
+      <span class="story-name"   id="final-chat-name">…</span>
+    </div>
+    <div class="speech-bubble" id="final-chat-text">…</div>
+    <div class="story-nav">
+      <span class="story-dots" id="final-chat-dots"></span>
+      <button class="btn btn-primary" id="btn-final-next">Continuar →</button>
+    </div>
+  </div>
+
+  <!-- Fase 2: celebración -->
+  <div id="final-celebration" class="final-content" style="display:none">
     <div class="final-cake" id="final-cake">🎂</div>
     <h1 class="final-title">¡Feliz cumpleaños,<br>Amets! 🎉</h1>
     <img src="data/familia.png" class="final-familia" alt="Familia de Amets">
