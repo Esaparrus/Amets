@@ -4,11 +4,11 @@
 ============================================================ */
 
 const CHARACTERS = {
-  lumi:   { emoji: '🌟', name: 'Lumi',                      color: '#fbbf24', img: 'assets/lumi.png'   },
-  arai:   { emoji: '🌸', name: 'Arai (tu hermana mayor)',   color: '#f472b6', img: 'assets/arai.png'   },
-  ainara: { emoji: '💜', name: 'Mamá Ainara',               color: '#a78bfa', img: 'assets/ainara.png' },
-  mara:   { emoji: '🐣', name: 'Mara (tu hermana pequeña)', color: '#34d399', img: 'assets/mara.png'   },
-  david:  { emoji: '⭐', name: 'Papá David',                color: '#60a5fa', img: 'assets/david.png'  }
+  lumi:   { emoji: '🌟', name: 'Lumi',                      color: '#fbbf24' },
+  arai:   { emoji: '🌸', name: 'Arai (tu hermana mayor)',   color: '#f472b6' },
+  ainara: { emoji: '💜', name: 'Mamá Ainara',               color: '#a78bfa' },
+  mara:   { emoji: '🐣', name: 'Mara (tu hermana pequeña)', color: '#34d399' },
+  david:  { emoji: '⭐', name: 'Papá David',                color: '#60a5fa' }
 };
 
 /* Capítulos de historia, indexados por GAME.step cuando se llama a la escena */
@@ -105,14 +105,14 @@ const StoryScene = {
     /* Avatar y nombre del personaje */
     const avatarEl = document.getElementById('story-avatar');
     avatarEl.innerHTML = '';
-    if (char.img) {
-      const imgEl = document.createElement('img');
-      imgEl.src = char.img;
-      imgEl.alt = char.name;
-      imgEl.className = 'story-avatar-img';
-      imgEl.style.borderColor = char.color;
-      imgEl.onerror = () => { avatarEl.innerHTML = ''; avatarEl.textContent = char.emoji; };
-      avatarEl.appendChild(imgEl);
+    if (PORTRAITS && PORTRAITS[line.char]) {
+      const sz = Math.min(130, Math.floor(Math.min(window.innerWidth * 0.28, window.innerHeight * 0.22)));
+      const cvs = document.createElement('canvas');
+      cvs.width = cvs.height = sz;
+      cvs.className = 'story-avatar-img';
+      cvs.style.borderColor = char.color;
+      avatarEl.appendChild(cvs);
+      PORTRAITS[line.char](cvs.getContext('2d'), sz, sz);
     } else {
       avatarEl.textContent = char.emoji;
     }
