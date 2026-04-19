@@ -250,6 +250,12 @@ const QUESTIONS = {
       opts: ["Federico García Lorca", "Miguel de Cervantes", "Francisco de Quevedo"],
       a: 1,
       hint: "Vivió entre 1547 y 1616 y es el autor más famoso de España"
+    },
+    {
+      q: "¿Cuál es tu tío favorito? (sé sincera 😏)",
+      opts: ["Aritz", "Unai", "Coco"],
+      a: 1,
+      hint: "Empieza por U… ¡ya sabes quién es! 😄"
     }
   ]
 };
