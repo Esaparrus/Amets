@@ -255,21 +255,35 @@ const QUESTIONS = {
       q: "¿Cuál es tu tío favorito? (sé sincera 😏)",
       opts: ["Aritz", "Unai", "Coco"],
       a: 1,
-      hint: "Empieza por U… ¡ya sabes quién es! 😄"
+      hint: "Empieza por U… ¡ya sabes quién es! 😄",
+      forced: true
     }
   ]
 };
 
-/* Función: N preguntas aleatorias mezclando categorías */
+/* Función: N preguntas aleatorias mezclando categorías
+   Las preguntas con forced:true siempre aparecen, en posición aleatoria */
 function getRandomQuestions(n, categories) {
   categories = categories || ['matematicas', 'idioma', 'cultura'];
   let pool = [];
   categories.forEach(cat => {
     if (QUESTIONS[cat]) pool = pool.concat(QUESTIONS[cat]);
   });
-  for (let i = pool.length - 1; i > 0; i--) {
+
+  const forced = pool.filter(q => q.forced);
+  const normal = pool.filter(q => !q.forced);
+
+  for (let i = normal.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [pool[i], pool[j]] = [pool[j], pool[i]];
+    [normal[i], normal[j]] = [normal[j], normal[i]];
   }
-  return pool.slice(0, n);
+
+  const selected = [...forced, ...normal.slice(0, Math.max(0, n - forced.length))];
+
+  /* Mezclar la lista final para que la pregunta forzada no sea siempre la primera */
+  for (let i = selected.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [selected[i], selected[j]] = [selected[j], selected[i]];
+  }
+  return selected;
 }
