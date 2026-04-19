@@ -50,6 +50,7 @@ const GAME = {
   init() {
     this.step       = 0;
     this.cakePieces = 0;
+    resetUsedQuestions();
     this.showScreen('intro');
     IntroScene.init();
   },
@@ -124,6 +125,7 @@ const GAME = {
   restart() {
     this.step       = 0;
     this.cakePieces = 0;
+    resetUsedQuestions();
     this.goTo('intro');
   }
 };
