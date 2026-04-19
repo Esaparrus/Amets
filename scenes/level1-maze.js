@@ -17,6 +17,7 @@ const MazeScene = {
 
   canvas:        null,
   ctx:           null,
+  _charImg:      null,
   map:           null,
   player:        { x:1, y:1 },
   cell:          28,
@@ -72,6 +73,10 @@ const MazeScene = {
   init() {
     this.canvas = document.getElementById('canvas-maze');
     this.ctx    = this.canvas.getContext('2d');
+    if (!this._charImg) {
+      this._charImg = new Image();
+      this._charImg.src = 'data/ametsjuegos.png';
+    }
     this.mazeLevel     = 0;
     this.transitioning = false;
     this._loadMaze(0);
@@ -245,6 +250,14 @@ const MazeScene = {
   },
 
   _drawCharacter(ctx, x, y, C) {
+    /* Usar imagen PNG si está cargada */
+    if (this._charImg && this._charImg.complete && this._charImg.naturalWidth > 0) {
+      const imgW = C * 0.82;
+      const imgH = imgW * 1.88;
+      ctx.drawImage(this._charImg, x + (C - imgW) / 2, y + C - imgH, imgW, imgH);
+      return;
+    }
+    /* Fallback: personaje dibujado */
     const cx = x + C/2, cy = y + C/2;
     const s  = C * 0.36;
     const f  = Math.floor(this.animFrame / 2) % 2;

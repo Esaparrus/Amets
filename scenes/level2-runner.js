@@ -7,6 +7,7 @@ const RunnerScene = {
   raf: null,
   canvas: null,
   ctx:    null,
+  _charImg: null,
 
   W: 500, H: 210,
   GROUND: 155,
@@ -36,6 +37,10 @@ const RunnerScene = {
     btn.ontouchstart = e => { e.preventDefault(); this.jump(); };
     btn.onclick      = () => this.jump();
 
+    if (!this._charImg) {
+      this._charImg = new Image();
+      this._charImg.src = 'data/ametsjuegos.png';
+    }
     AUDIO.startMusic('level');
     this._reset();
   },
@@ -98,9 +103,10 @@ const RunnerScene = {
     this.obstacles = this.obstacles.filter(o => { o.x -= this.speed; return o.x > -40; });
 
     /* Colisiones */
-    const px = p.x + 7, py = p.y - p.size + 7, pw = p.size - 14, ph = p.size - 10;
+    const imgH = 76;
+    const px = p.x + 8, py = p.y + 40 - imgH + 18, pw = 28, ph = imgH - 26;
     for (const o of this.obstacles) {
-      const oy = this.GROUND - o.h + 2;
+      const oy = this.GROUND + 40 - o.h;
       if (px < o.x + o.w && px + pw > o.x && py < oy + o.h && py + ph > oy) {
         this.running = false;
         AUDIO.crash();
@@ -163,9 +169,9 @@ const RunnerScene = {
     ctx.fillStyle = '#16a34a';
     ctx.fillRect(0, GROUND + 40, W, 5);
 
-    /* Obstáculos */
+    /* Obstáculos (cactus sobre el suelo) */
     for (const o of obstacles) {
-      const oy = GROUND - o.h + 2;
+      const oy = GROUND + 40 - o.h;        // base pegada al suelo
       ctx.fillStyle = '#15803d';
       ctx.fillRect(o.x, oy, o.w, o.h);
       ctx.fillStyle = '#166534';
@@ -173,11 +179,16 @@ const RunnerScene = {
       ctx.fillRect(o.x + o.w, oy + 12, 8, 10);
     }
 
-    /* Jugadora */
-    ctx.font = `${p.size}px serif`;
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'bottom';
-    ctx.fillText('🧒', p.x + p.size/2, p.y + 40);
+    /* Jugadora (imagen pixel art) */
+    const imgW = 44, imgH = 76;
+    if (this._charImg && this._charImg.complete && this._charImg.naturalWidth > 0) {
+      ctx.drawImage(this._charImg, p.x, p.y + 40 - imgH, imgW, imgH);
+    } else {
+      ctx.font = `${p.size}px serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'bottom';
+      ctx.fillText('🧒', p.x + p.size/2, p.y + 40);
+    }
 
     /* Barra de progreso */
     const prog = Math.min(dist / TARGET, 1);
