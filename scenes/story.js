@@ -14,64 +14,56 @@ const CHARACTERS = {
 /* Capítulos de historia, indexados por GAME.step cuando se llama a la escena */
 const STORY_CHAPTERS = {
 
-  /* ── Capítulo 1: Lumi presenta la aventura ── */
+  /* ── Capítulo 1: Crisis – el cumpleaños ha desaparecido ── */
   1: [
     { char: 'lumi',
-      text: "Amets, algo terrible ha pasado. El cumpleaños que tu mamá Ainara y tu papá David prepararon con tanto cariño… ¡ha desaparecido misteriosamente!" },
+      text: "¡Amets! Ha pasado algo terrible… El cumpleaños que prepararon tus padres ha desaparecido misteriosamente." },
+    { char: 'ainara',
+      text: "Cariño, llevamos horas buscando. Las decoraciones, el pastel, las velas… todo ha desaparecido. 😢" },
+    { char: 'david',
+      text: "Alguien lo ha dividido en seis piezas mágicas y las ha escondido por todo el camino. Sin ellas, no hay celebración." },
+    { char: 'mara',
+      text: "¡¡¡QUIERO MI PASTEL DE FRESA!!! 😭😭😭" },
     { char: 'lumi',
-      text: "Alguien lo ha dividido en seis piezas mágicas y las ha escondido por todo el camino. Sin ellas, no habrá pastel, ni velas, ni sorpresa." },
-    { char: 'lumi',
-      text: "Tu hermana mayor Arai entró al bosque a buscar pistas. Y la pequeña Mara no para de llorar. Necesitan que tú, la del medio, seas la más valiente de las tres." },
-    { char: 'lumi',
-      text: "Yo soy Lumi, tu guía mágica. Juntas superaremos laberintos, carreras, pruebas de memoria y retos que harán pensar a cualquiera. ¿Estás lista, Amets? 🌟" }
+      text: "Soy Lumi, tu guía mágica. Solo tú puedes recuperarlo, Amets. ¡Eres la más valiente de las tres! ¿Estás lista? 🌟" }
   ],
 
   /* ── Capítulo 2: Arai da una pista (tras el laberinto) ── */
   4: [
     { char: 'arai',
-      text: "¡AMETS! Sabía que llegarías. Me metí en el bosque y encontré una nota de papá David debajo de una piedra." },
+      text: "¡AMETS! ¡Sabía que llegarías! Me metí en el bosque y encontré esto debajo de una piedra… es una nota de papá." },
+    { char: 'david',
+      text: "«La primera pieza la guarda la Maestra de Ballet. Solo la entrega a quien demuestre que sabe pensar. No vale adivinar.»" },
     { char: 'arai',
-      text: "Dice: 'La primera pieza del pastel la guarda la Maestra de Ballet. Solo la entrega a quien demuestre que sabe pensar y resolver problemas difíciles. No vale adivinar.' "},
-    { char: 'arai',
-      text: "Yo lo intenté y me bloqueé con las matemáticas… pero tú siempre fuis mejor que yo en eso, aunque no te lo diga siempre. ¡Tú puedes, hermana! Y yo estaré esperándote aquí." }
+      text: "Yo lo intenté y me bloqueé con las mates… pero tú siempre fuiste mejor que yo en eso, aunque no te lo diga siempre 😅" },
+    { char: 'ainara',
+      text: "¡Tú puedes, cariño! Nosotros te esperamos aquí. ¡Ánimo! 💜" }
   ],
 
-  /* ── Capítulo 3: Ainara envía un mensaje (tras Boss 1) ── */
+  /* ── Capítulo 3: Antes del runner (tras Boss 1) ── */
   6: [
     { char: 'ainara',
-      text: "Amets, cariño, soy mamá. He visto cómo has superado la prueba de la Maestra de Ballet. Estoy tan orgullosa que se me han llenado los ojos de lágrimas." },
+      text: "Amets… he visto cómo has superado a la Maestra de Ballet. ¡Estoy llorando de orgullo! 😭💜" },
+    { char: 'david',
+      text: "¡Eso es mi niña! Ahora viene una carrera larga por el camino encantado. Hay muchos obstáculos." },
+    { char: 'arai',
+      text: "Tienes que saltar sin parar, hermana. Y si te caes, te levantas. ¡Nosotros te vemos desde aquí!" },
     { char: 'ainara',
-      text: "La siguiente prueba es una carrera muy larga. Hay obstáculos en el camino encantado y tendrás que saltar sin parar. Recuerda lo que siempre te digo: cuando algo se pone difícil, respiras y sigues." },
-    { char: 'ainara',
-      text: "Papá David y yo lo tenemos todo preparado para cuando llegues al final. Te queremos con toda el alma. ¡Ánimo, mi niña valiente! 💜" }
+      text: "Recuerda lo que siempre te digo: cuando algo se pone difícil, respiras hondo… y sigues. 💜" }
   ],
 
-  /* ── Capítulo 4: Mara aparece (tras Boss 2) ── */
+  /* ── Capítulo 4: Antes de la furgoneta (tras Boss 2) ── */
   10: [
     { char: 'mara',
-      text: "¡¡¡AMEEEETS!!! Soy Mara. ¿Ya casi lo tienes? ¡Yo quiero pastel de fresa! ¡Que no se olvide que es de fresa!" },
+      text: "¡¡¡AMEEEETS!!! ¿Ya casi lo tienes? ¡¡Yo quiero pastel de fresa!! ¡Que no se olvide!" },
+    { char: 'david',
+      text: "Mara, cariño… Amets: la furgoneta está lista. Es el último tramo y el más difícil. Muévete bien." },
     { char: 'mara',
-      text: "Mamá me dijo que no te distrajera pero… ¡quería decirte que eres la mejor hermana del mundo! Aunque a veces me quites la tablet y me hagas ver tus vídeos de ballet." },
-    { char: 'david',
-      text: "Mara, cariño, deja hablar a papá. Amets: la furgoneta está lista. El último tramo es el más difícil — el camino tiene muchos árboles y la velocidad va aumentando. Muévete bien y llegarás." },
-    { char: 'lumi',
-      text: "Esta es la última fase antes del enfrentamiento final. Todo lo que has aprendido en la aventura lo necesitarás ahora. ¡Vamos, Amets! 🌟" }
-  ],
-
-  /* ── Capítulo 5: Reunión familiar (tras Boss 3) ── */
-  14: [
-    { char: 'david',
-      text: "¡Mi niña! Estoy aquí, al final del camino. He seguido cada uno de tus pasos y he visto lo que eres capaz de hacer cuando te lo propones." },
-    { char: 'david',
-      text: "Has resuelto problemas difíciles, has corrido sin rendirte, has memorizado secuencias complicadas y has respondido preguntas que no son fáciles. Eso, Amets, no lo hace cualquiera." },
-    { char: 'ainara',
-      text: "Eres la hija del medio, la que une a Arai y a Mara. La que siempre encuentra la manera. Hoy has demostrado que cuando te propones algo, no hay nada que te detenga." },
+      text: "¡Eres la mejor hermana del mundo! Aunque a veces me quites la tablet y me pongas vídeos de ballet." },
     { char: 'arai',
-      text: "¡Lo sabía! Te lo dije que podías. Ahora no me lo eches en cara durante un año, ¿eh? Pero en serio… estoy muy orgullosa de ti, Amets." },
-    { char: 'mara',
-      text: "¡¡¡PASTELLLLL!!! Ah, y que sepas que eres mi hermana favorita. Pero eso no se lo digas a Arai." },
+      text: "No le hagas caso, Amets. Tú céntrate. Esquiva los árboles y llega al final. ¡Puedes hacerlo!" },
     { char: 'lumi',
-      text: "¡El cumpleaños ha sido recuperado! Todas las piezas del pastel están juntas. Ha llegado el momento de celebrarlo. ¡Feliz cumpleaños, Amets! 🎂✨" }
+      text: "¡Última fase antes del gran reto final! Todo lo que has aprendido lo necesitarás ahora. ¡Vamos! 🌟" }
   ]
 };
 
