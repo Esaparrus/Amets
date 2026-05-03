@@ -22,12 +22,14 @@ const AUDIO = {
     if (!this.ctx) {
       try {
         this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+        /* Desbloquear una sola vez al crear */
+        this._unlock();
       } catch (e) { console.warn('Audio no disponible'); return; }
     }
     /* Siempre intentar reanudar — crítico en iOS/Safari */
-    this._resume();
-    /* Desbloquear contexto en iOS con buffer silencioso */
-    this._unlock();
+    if (this.ctx.state === 'suspended') {
+      this.ctx.resume().catch(() => {});
+    }
   },
 
   _resume() {
@@ -50,8 +52,14 @@ const AUDIO = {
 
   /* ── Tono básico ── */
   _tone(freq, dur, type = 'sine', vol = 0.4, delay = 0) {
+    /* Asegurar contexto antes de cada tono — clave en móvil */
+    if (!this.ctx) this.init();
     if (!this.ctx || this.muted || freq <= 0) return;
-    this._resume();
+    if (this.ctx.state === 'suspended') {
+      this.ctx.resume().catch(() => {});
+      /* No cancelar: programar igualmente — el resume es casi instantáneo
+         una vez el contexto ha sido desbloqueado por el gesto inicial */
+    }
     const t    = this.ctx.currentTime + delay;
     const osc  = this.ctx.createOscillator();
     const gain = this.ctx.createGain();
@@ -164,19 +172,30 @@ const AUDIO = {
 
   startMusic(theme) {
     this.stopMusic();
+    if (!this.ctx) this.init();
     if (!this.ctx || this.muted) return;
-    this._resume();
+
     const t = this.THEMES[theme] || this.THEMES.menu;
     let i = 0;
     this.bgRunning = true;
-    const tick = () => {
-      if (!this.bgRunning) return;
-      const f = t.notes[i % t.notes.length];
-      if (f > 0) this._tone(f, (t.tempo / 1000) * 0.75, t.type, t.vol);
-      i++;
-      this.bgTimer = setTimeout(tick, t.tempo);
+
+    const _go = () => {
+      const tick = () => {
+        if (!this.bgRunning) return;
+        const f = t.notes[i % t.notes.length];
+        if (f > 0) this._tone(f, (t.tempo / 1000) * 0.75, t.type, t.vol);
+        i++;
+        this.bgTimer = setTimeout(tick, t.tempo);
+      };
+      tick();
     };
-    tick();
+
+    /* Esperar a que el contexto esté activo antes de arrancar notas */
+    if (this.ctx.state === 'suspended') {
+      this.ctx.resume().then(_go).catch(_go);
+    } else {
+      _go();
+    }
   },
 
   stopMusic() {

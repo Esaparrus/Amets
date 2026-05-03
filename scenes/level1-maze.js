@@ -8,16 +8,14 @@
 
 const MazeScene = {
 
-  /* Laberintos cada vez más grandes — el último es enorme */
+  /* 3 laberintos de dificultad creciente */
   CONFIGS: [
     { cols: 21, rows: 17 },   // 1 – mediano
-    { cols: 29, rows: 23 },   // 2 – grande
-    { cols: 37, rows: 31 },   // 3 – muy grande
-    { cols: 47, rows: 39 },   // 4 – difícil
-    { cols: 55, rows: 45 }    // 5 – brutal
+    { cols: 35, rows: 29 },   // 2 – grande
+    { cols: 49, rows: 41 }    // 3 – brutal
   ],
 
-  TOTAL_MAZES: 5,
+  TOTAL_MAZES: 3,
 
   canvas:        null,
   ctx:           null,
@@ -106,6 +104,7 @@ const MazeScene = {
   },
 
   _loadMaze(level) {
+    this._hideMessage();
     const cfg  = this.CONFIGS[level % this.CONFIGS.length];
     this.map   = this._generateMaze(cfg.cols, cfg.rows);
     this.player    = { x:1, y:1 };
@@ -172,14 +171,15 @@ const MazeScene = {
   },
 
   _drawMessage(msg) {
-    const { ctx, canvas } = this;
-    ctx.fillStyle = 'rgba(0,0,0,0.68)';
-    ctx.fillRect(0, canvas.height/2 - 38, canvas.width, 76);
-    ctx.fillStyle = '#FFD700';
-    ctx.font      = `bold ${Math.max(13, Math.floor(canvas.width/22))}px sans-serif`;
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(msg, canvas.width/2, canvas.height/2);
+    const el = document.getElementById('maze-msg');
+    if (!el) return;
+    el.textContent = msg;
+    el.style.display = 'block';
+  },
+
+  _hideMessage() {
+    const el = document.getElementById('maze-msg');
+    if (el) el.style.display = 'none';
   },
 
   draw() {
@@ -417,7 +417,7 @@ const MazeScene = {
   _drawHUD() {
     const { ctx, canvas, mazeLevel, TOTAL_MAZES } = this;
     const text = `🌿 Laberinto ${mazeLevel + 1} / ${TOTAL_MAZES}`;
-    const diffLabels = ['Fácil','Medio','Difícil','Muy difícil','¡Brutal!'];
+    const diffLabels = ['Mediano','Grande','¡Brutal!'];
     const diff = diffLabels[mazeLevel] || '';
     ctx.fillStyle = 'rgba(0,0,0,0.55)';
     ctx.fillRect(4, 4, 220, 28);

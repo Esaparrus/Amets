@@ -305,6 +305,20 @@ html, body {
 ═══════════════════════════════════════════════ */
 .canvas-screen { background: #060412; gap: 8px; }
 
+/* Mensaje de laberinto — div encima del canvas, no superpuesto */
+.maze-msg {
+  background: rgba(0,0,0,0.82);
+  color: #FFD700;
+  font-weight: 800;
+  font-size: clamp(0.9rem, 3vw, 1.15rem);
+  padding: 10px 22px;
+  border-radius: 12px;
+  text-align: center;
+  border: 1.5px solid rgba(245,200,66,0.4);
+  letter-spacing: 0.2px;
+  max-width: 100%;
+}
+
 #screen-level1 { background: radial-gradient(ellipse at 50% 100%, #052b05 0%, #041208 60%, #060412 100%); }
 #screen-level2 { background: radial-gradient(ellipse at 50% 0%, #0c4a6e 0%, #083344 50%, #060412 100%); }
 #screen-level3 { background: radial-gradient(ellipse at 50% 100%, #431407 0%, #1c0a04 50%, #060412 100%); }
