@@ -1,8 +1,9 @@
 /* ============================================================
    AUDIO.JS – Sistema de sonido con Web Audio API
    Sin dependencias externas. Genera sonidos sintetizados.
-   v3: fix móvil, sonidos ambientales (bosque / carretera),
-       advertencia de pájaro
+   v4: fix móvil – resume() ANTES de _unlock(), oscilador en vez
+       de buffer, flag _unlocked para no repetir, ambient espera
+       contexto activo.
 ============================================================ */
 
 const AUDIO = {
@@ -10,6 +11,7 @@ const AUDIO = {
   bgRunning:  false,
   bgTimer:    null,
   muted:      false,
+  _unlocked:  false,
 
   /* Ambiente (bosque / carretera) */
   ambRunning: false,
@@ -17,60 +19,76 @@ const AUDIO = {
   ambOsc:     null,
   ambGain:    null,
 
-  /* ── Inicializar (llamar tras cualquier gesto del usuario) ── */
+  /* ── Inicializar (llamar desde cualquier gesto del usuario) ── */
   init() {
     if (!this.ctx) {
       try {
         this.ctx = new (window.AudioContext || window.webkitAudioContext)();
-        /* Desbloquear una sola vez al crear */
-        this._unlock();
       } catch (e) { console.warn('Audio no disponible'); return; }
     }
-    /* Siempre intentar reanudar — crítico en iOS/Safari */
-    if (this.ctx.state === 'suspended') {
-      this.ctx.resume().catch(() => {});
+
+    if (this.ctx.state === 'running') {
+      /* Ya activo: asegurar unlock hecho */
+      if (!this._unlocked) this._unlock();
+      return;
     }
+
+    /* Suspended → resume primero, unlock en el callback */
+    this.ctx.resume().then(() => {
+      if (!this._unlocked) this._unlock();
+    }).catch(() => {});
   },
 
   _resume() {
-    if (this.ctx && this.ctx.state === 'suspended') {
-      this.ctx.resume().catch(() => {});
+    if (!this.ctx) return;
+    if (this.ctx.state === 'suspended') {
+      this.ctx.resume().then(() => {
+        if (!this._unlocked) this._unlock();
+      }).catch(() => {});
     }
   },
 
-  /* Reproduce un buffer vacío para desbloquear contexto en iOS */
+  /* Desbloquear con un oscilador silencioso de vida muy corta
+     (más fiable que buffer en iOS Safari) */
   _unlock() {
-    if (!this.ctx) return;
+    if (!this.ctx || this._unlocked) return;
     try {
-      const buf = this.ctx.createBuffer(1, 1, 22050);
-      const src = this.ctx.createBufferSource();
-      src.buffer = buf;
-      src.connect(this.ctx.destination);
-      src.start(0);
+      const osc  = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      gain.gain.value = 0.00001; /* prácticamente silencioso */
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(this.ctx.currentTime);
+      osc.stop(this.ctx.currentTime + 0.001);
+      osc.onended = () => { this._unlocked = true; };
     } catch (e) {}
   },
 
   /* ── Tono básico ── */
   _tone(freq, dur, type = 'sine', vol = 0.4, delay = 0) {
-    /* Asegurar contexto antes de cada tono — clave en móvil */
     if (!this.ctx) this.init();
     if (!this.ctx || this.muted || freq <= 0) return;
-    if (this.ctx.state === 'suspended') {
-      this.ctx.resume().catch(() => {});
-      /* No cancelar: programar igualmente — el resume es casi instantáneo
-         una vez el contexto ha sido desbloqueado por el gesto inicial */
+
+    const _play = () => {
+      if (this.ctx.state !== 'running') return;
+      const t    = this.ctx.currentTime + delay;
+      const osc  = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, t);
+      gain.gain.setValueAtTime(vol, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + dur);
+      osc.start(t);
+      osc.stop(t + dur + 0.02);
+    };
+
+    if (this.ctx.state === 'running') {
+      _play();
+    } else {
+      this.ctx.resume().then(_play).catch(() => {});
     }
-    const t    = this.ctx.currentTime + delay;
-    const osc  = this.ctx.createOscillator();
-    const gain = this.ctx.createGain();
-    osc.connect(gain);
-    gain.connect(this.ctx.destination);
-    osc.type = type;
-    osc.frequency.setValueAtTime(freq, t);
-    gain.gain.setValueAtTime(vol, t);
-    gain.gain.exponentialRampToValueAtTime(0.001, t + dur);
-    osc.start(t);
-    osc.stop(t + dur + 0.02);
   },
 
   /* ── SFX: Respuesta correcta ── */
@@ -190,11 +208,13 @@ const AUDIO = {
       tick();
     };
 
-    /* Esperar a que el contexto esté activo antes de arrancar notas */
-    if (this.ctx.state === 'suspended') {
-      this.ctx.resume().then(_go).catch(_go);
-    } else {
+    if (this.ctx.state === 'running') {
       _go();
+    } else {
+      this.ctx.resume().then(() => {
+        if (!this._unlocked) this._unlock();
+        _go();
+      }).catch(_go);
     }
   },
 
@@ -211,9 +231,17 @@ const AUDIO = {
   startAmbient(type) {
     this.stopAmbient();
     if (this.muted || !this.ctx) return;
-    this._resume();
-    if (type === 'forest') this._ambientForest();
-    else if (type === 'road') this._ambientRoad();
+
+    const _start = () => {
+      if (type === 'forest') this._ambientForest();
+      else if (type === 'road') this._ambientRoad();
+    };
+
+    if (this.ctx.state === 'running') {
+      _start();
+    } else {
+      this.ctx.resume().then(_start).catch(() => {});
+    }
   },
 
   stopAmbient() {
@@ -229,7 +257,6 @@ const AUDIO = {
     const tick = () => {
       if (!this.ambRunning || this.muted) return;
       this._chirp();
-      /* a veces doble pío */
       if (Math.random() < 0.35) {
         setTimeout(() => { if (this.ambRunning && !this.muted) this._chirp(); }, 320);
       }
@@ -241,9 +268,9 @@ const AUDIO = {
   /* Carretera: zumbido de motor continuo + ráfagas de viento */
   _ambientRoad() {
     if (!this.ctx || this.muted) return;
+    if (this.ctx.state !== 'running') return; /* startAmbient ya hizo resume */
     this.ambRunning = true;
 
-    /* Zumbido motor */
     const osc  = this.ctx.createOscillator();
     const gain = this.ctx.createGain();
     osc.connect(gain);
@@ -255,7 +282,6 @@ const AUDIO = {
     this.ambOsc  = osc;
     this.ambGain = gain;
 
-    /* Ráfagas de viento periódicas */
     const windTick = () => {
       if (!this.ambRunning || this.muted) return;
       this._windGust();
@@ -265,7 +291,7 @@ const AUDIO = {
   },
 
   _windGust() {
-    if (!this.ctx || this.muted) return;
+    if (!this.ctx || this.muted || this.ctx.state !== 'running') return;
     const t = this.ctx.currentTime;
     const osc  = this.ctx.createOscillator();
     const gain = this.ctx.createGain();
@@ -286,7 +312,7 @@ const AUDIO = {
   toggleMute() {
     this.muted = !this.muted;
     if (this.muted) {
-      this.stopMusic(); /* también para el ambiente */
+      this.stopMusic();
     } else {
       this._resume();
     }
