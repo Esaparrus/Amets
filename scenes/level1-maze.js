@@ -110,6 +110,7 @@ const MazeScene = {
     this.player    = { x:1, y:1 };
     this.animFrame = 0;
     this._resize();
+    this._updateHUD();
     this.draw();
   },
 
@@ -208,7 +209,6 @@ const MazeScene = {
     }
 
     this._drawCharacter(ctx, this.player.x * C, this.player.y * C, C);
-    this._drawHUD();
   },
 
   _drawTree(ctx, x, y, C) {
@@ -414,17 +414,11 @@ const MazeScene = {
     ctx.restore();
   },
 
-  _drawHUD() {
-    const { ctx, canvas, mazeLevel, TOTAL_MAZES } = this;
-    const text = `🌿 Laberinto ${mazeLevel + 1} / ${TOTAL_MAZES}`;
-    const diffLabels = ['Mediano','Grande','¡Brutal!'];
-    const diff = diffLabels[mazeLevel] || '';
-    ctx.fillStyle = 'rgba(0,0,0,0.55)';
-    ctx.fillRect(4, 4, 220, 28);
-    ctx.fillStyle = '#FFD700';
-    ctx.font      = `bold 13px sans-serif`;
-    ctx.textAlign = 'left';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(`${text}  [${diff}]`, 10, 18);
+  _updateHUD() {
+    const diffLabels = ['Mediano', 'Grande', '¡Brutal!'];
+    const diff = diffLabels[this.mazeLevel] || '';
+    const hint = document.getElementById('maze-hint');
+    if (hint) hint.textContent =
+      `🌿 Laberinto ${this.mazeLevel + 1} / ${this.TOTAL_MAZES}  [${diff}]  — Llega a la salida ⭐`;
   }
 };
