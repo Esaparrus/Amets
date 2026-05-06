@@ -59,7 +59,7 @@ const STORY_CHAPTERS = {
     { char: 'david',
       text: "Mara, cariño… Amets: la furgoneta está lista. Es el último tramo y el más difícil. Muévete bien." },
     { char: 'mara',
-      text: "¡Eres la mejor hermana del mundo! Aunque a veces me quites la tablet y me pongas vídeos de ballet." },
+      text: "¡Eres la mejor hermana del mundo! Aunque a veces me haces enfadar cuando no me haces caso... ¡pero igualmente te quiero!" },
     { char: 'arai',
       text: "No le hagas caso, Amets. Tú céntrate. Esquiva los árboles y llega al final. ¡Puedes hacerlo!" },
     { char: 'lumi',

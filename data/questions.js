@@ -355,8 +355,17 @@ const QUESTIONS = {
   ]
 };
 
-/* Función: N preguntas aleatorias mezclando categorías
-   Las preguntas con forced:true siempre aparecen */
+/* Registro global de preguntas ya mostradas en esta partida.
+   Se resetea en GAME.restart() / GAME.init() */
+const _USED_QUESTIONS = new Set();
+
+function resetUsedQuestions() {
+  _USED_QUESTIONS.clear();
+}
+
+/* Función: N preguntas aleatorias mezclando categorías.
+   - Las preguntas con forced:true siempre aparecen (aunque se repitan).
+   - Las demás nunca se repiten dentro de la misma partida. */
 function getRandomQuestions(n, categories) {
   categories = categories || ['matematicas', 'idioma', 'cultura', 'series'];
   let pool = [];
@@ -365,8 +374,10 @@ function getRandomQuestions(n, categories) {
   });
 
   const forced = pool.filter(q => q.forced);
-  const normal = pool.filter(q => !q.forced);
+  /* Excluir preguntas ya usadas */
+  const normal = pool.filter(q => !q.forced && !_USED_QUESTIONS.has(q.q));
 
+  /* Barajar */
   for (let i = normal.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [normal[i], normal[j]] = [normal[j], normal[i]];
@@ -374,10 +385,14 @@ function getRandomQuestions(n, categories) {
 
   const selected = [...forced, ...normal.slice(0, Math.max(0, n - forced.length))];
 
-  /* Mezclar la lista final para que la pregunta forzada no sea siempre la primera */
+  /* Mezclar la lista final */
   for (let i = selected.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [selected[i], selected[j]] = [selected[j], selected[i]];
   }
+
+  /* Registrar las preguntas seleccionadas como usadas */
+  selected.forEach(q => { if (!q.forced) _USED_QUESTIONS.add(q.q); });
+
   return selected;
 }

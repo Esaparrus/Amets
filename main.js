@@ -50,6 +50,7 @@ const GAME = {
   init() {
     this.step       = 0;
     this.cakePieces = 0;
+    resetUsedQuestions();
     this.showScreen('intro');
     IntroScene.init();
   },
@@ -124,6 +125,7 @@ const GAME = {
   restart() {
     this.step       = 0;
     this.cakePieces = 0;
+    resetUsedQuestions();
     this.goTo('intro');
   }
 };
@@ -175,10 +177,11 @@ document.addEventListener('DOMContentLoaded', () => {
     GAME.restart();
   });
 
-  /* Inicializar y reanudar audio en cada gesto — crítico en iOS/Safari */
+  /* Inicializar y reanudar audio en cada gesto — crítico en iOS/Safari.
+     Fase de captura: se ejecuta ANTES que los handlers de los botones. */
   const _audioWake = () => AUDIO.init();
-  document.addEventListener('click',      _audioWake);
-  document.addEventListener('touchstart', _audioWake, { passive: true });
+  document.addEventListener('touchstart', _audioWake, { passive: true, capture: true });
+  document.addEventListener('click',      _audioWake, { capture: true });
 
   GAME.init();
 });
