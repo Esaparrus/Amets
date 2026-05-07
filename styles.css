@@ -416,22 +416,25 @@ canvas {
 /* ── Van touch ── */
 .van-touch {
   display: flex;
-  gap: 28px;
-  justify-content: center;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0 12px;
   margin-top: 6px;
+  box-sizing: border-box;
 }
 .btn-van {
-  background: rgba(255,255,255,0.10);
-  border: 1.5px solid rgba(255,255,255,0.22);
-  border-radius: 16px;
-  width: 80px; height: 80px;
-  font-size: 2rem;
+  background: rgba(255,255,255,0.12);
+  border: 2px solid rgba(255,255,255,0.28);
+  border-radius: 20px;
+  width: 96px; height: 96px;
+  font-size: 2.4rem;
   cursor: pointer;
   touch-action: manipulation;
   transition: background 0.08s, transform 0.08s;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.35);
+  box-shadow: 0 4px 18px rgba(0,0,0,0.4);
 }
-.btn-van:active { background: rgba(251,191,36,0.35); transform: scale(0.89); }
+.btn-van:active { background: rgba(251,191,36,0.40); transform: scale(0.88); }
 
 .touch-controls { display: none; }
 @media (pointer: coarse) { .touch-controls { display: flex; flex-direction: column; align-items: center; } }
