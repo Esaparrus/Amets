@@ -177,10 +177,12 @@ document.addEventListener('DOMContentLoaded', () => {
     GAME.restart();
   });
 
-  /* Inicializar y reanudar audio en cada gesto — crítico en iOS/Safari.
-     Fase de captura: se ejecuta ANTES que los handlers de los botones. */
+  /* Desbloquear audio en cada gesto — crítico en iOS/Safari y Android Chrome.
+     Capture=true: se ejecuta ANTES que los handlers de los botones.
+     touchstart + touchend + click cubre todos los navegadores móviles. */
   const _audioWake = () => AUDIO.init();
   document.addEventListener('touchstart', _audioWake, { passive: true, capture: true });
+  document.addEventListener('touchend',   _audioWake, { passive: true, capture: true });
   document.addEventListener('click',      _audioWake, { capture: true });
 
   GAME.init();
