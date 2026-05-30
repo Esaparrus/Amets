@@ -10,12 +10,10 @@ const MazeScene = {
 
   /* 3 laberintos de dificultad creciente */
   CONFIGS: [
-    { cols: 21, rows: 17 },   // 1 – mediano
-    { cols: 35, rows: 29 },   // 2 – grande
-    { cols: 49, rows: 41 }    // 3 – brutal
+    { cols: 49, rows: 41 }    // dificil
   ],
 
-  TOTAL_MAZES: 3,
+  TOTAL_MAZES: 1,
 
   canvas:        null,
   ctx:           null,
@@ -156,18 +154,9 @@ const MazeScene = {
       this.transitioning = true;
       AUDIO.correct();
 
-      if (this.mazeLevel >= this.TOTAL_MAZES - 1) {
-        AUDIO.levelComplete();
-        this._drawMessage('¡¡Bosque superado!! 🎉🌟');
-        setTimeout(() => { GAME.addCakePiece(); GAME.next(); }, 1400);
-      } else {
-        this.mazeLevel++;
-        this._drawMessage(`✅ ¡Laberinto ${this.mazeLevel} / ${this.TOTAL_MAZES} superado! El siguiente es más difícil…`);
-        setTimeout(() => {
-          this.transitioning = false;
-          this._loadMaze(this.mazeLevel);
-        }, 1800);
-      }
+      AUDIO.levelComplete();
+      this._drawMessage('¡¡Bosque superado!! 🎉🌟');
+      setTimeout(() => { GAME.addCakePiece(); GAME.next(); }, 1400);
     }
   },
 
@@ -415,10 +404,7 @@ const MazeScene = {
   },
 
   _updateHUD() {
-    const diffLabels = ['Mediano', 'Grande', '¡Brutal!'];
-    const diff = diffLabels[this.mazeLevel] || '';
     const hint = document.getElementById('maze-hint');
-    if (hint) hint.textContent =
-      `🌿 Laberinto ${this.mazeLevel + 1} / ${this.TOTAL_MAZES}  [${diff}]  — Llega a la salida ⭐`;
+    if (hint) hint.textContent = '🌿 Laberinto difícil — Llega a la salida ⭐';
   }
 };

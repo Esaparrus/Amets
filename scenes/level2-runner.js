@@ -68,7 +68,7 @@ const RunnerScene = {
 
   jump() {
     if (this.p && this.p.onGround) {
-      this.p.vy = -13;
+      this.p.vy = -16;
       this.p.onGround = false;
       AUDIO.jump();
     }
